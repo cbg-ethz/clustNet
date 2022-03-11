@@ -1,0 +1,324 @@
+generatebinaryBN <- function (n, ii, baseline, startadj=NULL,d=2) {
+  set.seed(ii)
+  maxneib<-5
+  if (is.null(startadj)) {
+  while(maxneib>4) {
+    mydag<-randDAG(n, d, method ="power")
+    adj<-graph2m(mydag)
+    maxneib<-max(apply(adj,2,sum))
+  }
+  } else {mydag<-m2graph(startadj)}
+  adj<-graph2m(mydag)
+  parlist<-list()
+  np<-vector()
+  for (i in 1:n) {
+    parlist[[i]]<-sort(which(adj[,i]==1))
+    np[i]<-length(parlist[[i]])
+  }
+
+  mapping<-BNmaps(np)
+  ord<-as.numeric(tsort(mydag))
+  fp<-list()
+  for (i in ord) {
+    fp[[i]]<-generatefactors(np[i],baseline,mapping)
+  }
+  res<-list()
+  res$DAG<-mydag
+  res$adj<-adj
+  res$parlist<-parlist
+  res$np<-np
+  res$fp<-fp
+  res$ord<-ord
+  res$map<-mapping
+  res$skel<-1*(adj|t(adj))
+  res$skel<-ifelse(upper.tri(res$skel)==TRUE,res$skel,0)
+  return (res)
+}
+
+generatebinaryBN.data <- function (n,binaryBN,samplesize) {
+  BNsample<-matrix(ncol=n,nrow=samplesize)
+
+  for (k in 1:samplesize) {
+    for (i in binaryBN$ord) {
+      if(binaryBN$np[i]==0) { #if node has no parents sample 0/1
+        if (sum(binaryBN$adj[i,])==0) {
+          BNsample[k,i]<-rbinom(1,1,0.03)
+        } else {
+        BNsample[k,i]<-rbinom(1,1,binaryBN$fp[[i]][1])}
+      } else {
+        binaryvec<-BNsample[k,binaryBN$parlist[[i]]]
+        BNsample[k,i]<-rbinom(1,1,binaryBN$fp[[i]][which(binaryBN$map$index[[binaryBN$np[i]]]==BinToDec(binaryvec))])
+      }
+    }
+  }
+  return(BNsample)
+}
+
+BNmaps <- function (np) {
+  uniquenp<-setdiff(unique(np),0)
+  maps<-list()
+  maps$partable<-list()
+  maps$index<-list()
+  for (i in uniquenp) {
+    maps$partable[[i]]<-expand.grid(rep(list(0:1),i))
+    maps$index[[i]]<-apply(maps$partable[[i]],1,BinToDec)
+  }
+  return(maps)
+}
+
+BinToDec <- function(x)
+  sum(2^(which(rev(unlist(strsplit(as.character(x), "")) == 1))-1))
+
+generatefactors <- function (nf,baselinevec,mapping) {
+
+  prob0<-vector(length=2^nf)
+  if (nf>0) {
+    prob0[1]<-runif(1, min = 0.01, max = 0.1) #probability of 1 when parents are present
+  } else {
+    prob0[1]<-runif(1, min = baselinevec[1], max = baselinevec[2]) #probability of 1 when node has no parents
+  }
+  if(nf>0){
+    if (4<5) {
+      if (nf<3) {
+        factorstrength<-runif(nf, min = 0.4, max = 0.9)
+        prob0[2:(2^nf)]<-(apply(t(t(as.matrix(mapping$partable[[nf]]))*factorstrength),1,sum))[2:(2^nf)]
+        prob0[which(prob0>0.95)]<-0.95
+      } else {
+        factorstrength<-runif(nf, min = 0.4, max = 0.9)
+        prob0[2:(2^nf)]<-(apply(t(t(as.matrix(mapping$partable[[nf]]))*factorstrength),1,sum))[2:(2^nf)]
+        prob0[which(prob0>0.95)]<-0.95
+      }
+    } else {
+      if (nf<3) {
+        factorstrength<--runif(nf, min = 0.45, max = 0.85)
+        prob0[2:(2^nf)]<-(apply(t(t(as.matrix(mapping$partable[[nf]]))*factorstrength),1,sum))[2:(2^nf)]
+        prob0[which(prob0<0.05)]<-0.05
+      } else {
+        factorstrength<--runif(nf, min = 0.45, max = 0.85)
+        prob0[2:(2^nf)]<-(apply(t(t(as.matrix(mapping$partable[[nf]]))*factorstrength),1,sum))[2:(2^nf)]
+        prob0[which(prob0<0.05)]<-0.05
+      }
+    }
+  }
+  return(prob0)
+}
+
+# functions added by Fritz Bayer
+
+addBackgroundNodes <- function(n,nbg,sseed,startBN,probOfBG=0.3){
+
+  set.seed(sseed)
+
+  # add background nodes
+  tempBN <- rbind(startBN$adj, array(sample(c(1,0), n*nbg, replace = T, prob = c(probOfBG,1-probOfBG)),c(nbg,n)))
+  tempBN <- cbind(tempBN, array(0,c(nbg+n,nbg)))
+
+  # to make sure that background nodes don't interact themselves
+  tempBN[(n+1):(n+nbg),(n+1):(n+nbg)] <- 0
+
+  # label new nodes
+  rownames(tempBN)[n:(n+nbg)] <- as.character(n:(n+nbg))
+  colnames(tempBN)[n:(n+nbg)] <- as.character(n:(n+nbg))
+
+  # make BN from adjacency matrix
+  endBN <- generatebinaryBN(n+nbg, ii=sseed,baseline=c(0.3,0.5),startadj = tempBN)
+
+  return(endBN)
+}
+
+addFixedBackgroundNodes <- function(n,nbg,sseed,startBN, adjacenyMatrixBG,probOfBG=0.3){
+  # add background nodes to BN
+  tempBN <- adjacenyMatrixBG
+  tempBN[1:n,1:n] <- startBN$adj
+
+  # make BN from adjacency matrix
+  endBN <- generatebinaryBN(n+nbg, ii=sseed,baseline=c(0.3,0.5),startadj = tempBN)
+
+  return(endBN)
+}
+
+getBackgroundNodes <- function(n,nbg,sseed,probOfBG=0.3){
+
+  set.seed(sseed)
+
+  # add background nodes
+  tempBN <- rbind(array(0,c(n,n)), array(sample(c(1,0), n*nbg, replace = T, prob = c(probOfBG,1-probOfBG)),c(nbg,n)))
+  tempBN <- cbind(tempBN, array(0,c(nbg+n,nbg)))
+
+  # to make sure that background nodes don't interact themselves
+  tempBN[(n+1):(n+nbg),(n+1):(n+nbg)] <- 0
+
+  # label new nodes
+  rownames(tempBN)[1:(n+nbg)] <- as.character(1:(n+nbg))
+  colnames(tempBN)[1:(n+nbg)] <- as.character(1:(n+nbg))
+
+  return(tempBN)
+}
+
+generateBNs <- function(nnets, n, nbg, sseed, bgedges="same", baseline=c(0.3,0.5), plotnets=TRUE){
+  # simulate nnets Bayesian networks with n variables and nbg background variables
+
+  set.seed(sseed)
+
+  #generate 3 power-law networks each with 20 nodes
+  BNs<-list()
+  for (gg in 1:nnets){
+    BNs[[gg]]<-generatebinaryBN(n, ii=sseed+gg,baseline=baseline)
+  }
+
+  # # plot the BN without background variables
+  # if (plotnets==TRUE){
+  #   #plot BNs
+  #   par(mfrow=c(1,3))
+  #   for (gg in 1:nnets){
+  #     plot(BNs[[gg]]$DAG, attrs=list(node=list(fontsize=10, fixedsize=TRUE,
+  #                                             height=0.5,width=0.5)))
+  #   }
+  # }
+
+  if (bgedges=="different"){
+
+    #generate 3 power-law networks each with 20 nodes and 3 background nodes
+    BNsBG<-list()
+    for (gg in 1:nnets){
+      BNsBG[[gg]]<-addBackgroundNodes(n,nbg,sseed+gg,BNs[[gg]],probOfBG=0.3)
+    }
+  }else if (bgedges=="same"){
+
+    # get nodes for background nodes
+    adjacenyMatrixBG <- getBackgroundNodes(n,nbg,sseed,probOfBG=0.3)
+
+    # unify background nodes with cluster BN
+    BNsBG<-list()
+    tempP <- runif(nbg, 0.05,0.95)
+    for (gg in 1:nnets){
+      BNsBG[[gg]]<-addFixedBackgroundNodes(n,nbg,sseed+gg,BNs[[gg]], adjacenyMatrixBG,probOfBG=0.3)
+      # make CPTs of background nodes equal
+      for (bb in 1:nbg){
+        BNsBG[[gg]]$fp[[n+bb]] <- tempP[bb]
+      }
+    }
+
+  }else {
+
+    stop("Variable bgedges must be named either same or different")
+
+  }
+
+  if (plotnets==TRUE){
+    #plot BNs
+    par(mfrow=c(1,3))
+    for (gg in 1:nnets){
+      plot(BNsBG[[gg]]$DAG, attrs=list(node=list(fontsize=10, fixedsize=TRUE,
+                                               height=0.5,width=0.5)))
+    }
+  }
+
+  return(BNsBG)
+}
+
+generatebinaryBN.data.bggroups <- function (n, nbggroups, binaryBN,samplesize) {
+
+  #simulate CPTs for the different groups of background nodes
+  tempP <- array(runif(nbggroups*nbg, 0.05,0.95), c(nbggroups,nbg))
+
+  BNsample<-matrix(ncol=n,nrow=samplesize)
+
+  for (k in 1:samplesize) {
+    for (i in binaryBN$ord) {
+      if(binaryBN$np[i]==0) { #if node has no parents sample 0/1
+        if (sum(binaryBN$adj[i,])==0) {
+          BNsample[k,i]<-rbinom(1,1,0.03)
+        } else {
+          BNsample[k,i]<-rbinom(1,1,binaryBN$fp[[i]][1])}
+      } else {
+        binaryvec<-BNsample[k,binaryBN$parlist[[i]]]
+        BNsample[k,i]<-rbinom(1,1,binaryBN$fp[[i]][which(binaryBN$map$index[[binaryBN$np[i]]]==BinToDec(binaryvec))])
+      }
+    }
+  }
+  return(BNsample)
+}
+
+
+generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=NULL, lbgsamples=NULL){
+  #generate binary data from BNs and potentially different background groups
+  sampleList <- c()
+  ss <- sum(lsamples)
+  if (is.null(nbggroups)){
+    #without different backround groups
+    Datafull <- NULL
+    for (nn in 1:length(BNsBG)){
+      Datafull<-rbind(Datafull,generatebinaryBN.data(nvar,BNsBG[[nn]], lsamples[nn]))
+    }
+  } else if(is.null(lbgsamples)){
+    #with different backround groups
+
+    #sample background node group associations
+    samplegroup <- sample(c(1:nbggroups),ss, replace = TRUE)
+    #simulate CPTs for the different groups of background nodes
+    tempParray <- array(runif(nbggroups*nbg, 0.05,0.95), c(nbggroups,nbg))
+
+    Datafull <- NULL
+    tcount <- 1
+    for (nn in 1:length(BNsBG)){
+      for (gg in 1:nbggroups){
+        #get how many samples from this group are in that cluster
+        ntempsamples <- length(which(samplegroup[tcount:(tcount-1+lsamples[nn])]==gg))
+        #set CPTs of background nodes for respective group
+        tempP <- tempParray[gg,]
+        for (bb in 1:nbg){
+          BNsBG[[nn]]$fp[[n+bb]] <- tempP[bb]
+        }
+        #simlate the data
+        Datafull <- rbind(Datafull,generatebinaryBN.data(nvar,BNsBG[[nn]], ntempsamples))
+      }
+      tcount <- tcount+lsamples[nn]
+    }
+  } else {
+    #with different backround groups
+
+    #sample background node group associations
+    # samplegroup <- sample(c(1:nbggroups),ss, replace = TRUE)
+    #simulate CPTs for the different groups of background nodes
+    tempParray <- array(runif(nbggroups*nbg, 0.05,0.95), c(nbggroups,nbg))
+
+    ss2 <- sum(lbgsamples)
+    Datafull <- NULL
+    sampleList <- c()
+    for (gg in 1:nbggroups){
+      # get probs
+      probs <- runif(length(BNsBG),0.1,0.9)
+      probs <- probs/sum(probs)
+      samplegroup <- sample(c(1:length(BNsBG)),lbgsamples[gg], replace = TRUE, prob = probs)
+
+      for (nn in 1:length(BNsBG)){
+        #get how many samples from this group are in that cluster
+        ntempsamples <- length(which(samplegroup==nn))
+        #set CPTs of background nodes for respective group
+        tempP <- tempParray[gg,]
+        for (bb in 1:nbg){
+          BNsBG[[nn]]$fp[[n+bb]] <- tempP[bb]
+        }
+        #simlate the data
+        Datafull <- rbind(Datafull,generatebinaryBN.data(nvar,BNsBG[[nn]], ntempsamples))
+        sampleList <- c(sampleList, ntempsamples)
+      }
+    }
+  }
+
+  return(list("sampleList"=sampleList,"Datafull"=Datafull))
+}
+
+sampleData <- function(kclust=3, Nvars=20, sseed=1, samplesizes=c(300,400,500)){
+  # sample binary data from different Bayes nets
+  sampledDat <- c()
+  for (jj in 1:kclust){
+    bnsseed <- sseed+jj
+    binaryBN <- generatebinaryBN(Nvars, ii=bnsseed,baseline=c(0.3,0.5), startadj=NULL,d=2)
+    tempData <- generatebinaryBN.data(Nvars,binaryBN, samplesize = samplesizes[jj])
+    sampledDat <- rbind(sampledDat,tempData)
+  }
+
+  return(sampledDat)
+}

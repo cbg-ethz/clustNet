@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1646845824491.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "D72B8E06",
+    "lastKnownWriteTime" : 1646849607,
+    "last_content_update" : 1646849607263,
+    "path" : "~/Documents/phd_main/projects/pancancer-clustering-master/packages/network-clustering/graphClust/R/generatebinaryBN.R",
+    "project_path" : "R/generatebinaryBN.R",
+    "properties" : {
+        "cursorPosition" : "312,0",
+        "scrollLine" : "296"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

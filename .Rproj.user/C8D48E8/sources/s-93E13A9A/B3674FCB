@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1646933121824.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3952494100",
+    "id" : "B3674FCB",
+    "lastKnownWriteTime" : 1503562682,
+    "last_content_update" : 1503562682,
+    "path" : "~/Documents/phd_main/projects/pancancer-clustering-master/packages/network-clustering/graphClust/R/BBMMclusterEM.R",
+    "project_path" : "R/BBMMclusterEM.R",
+    "properties" : {
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
