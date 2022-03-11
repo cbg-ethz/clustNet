@@ -1,7 +1,3 @@
-# graphClust
-
-
-
 graphClust: Graph-based clustering of binary data and optional covariate adjustment
 -----------
 
