@@ -18,7 +18,7 @@ tool from an R session:
 
 ```{r eval=FALSE}
 library("devtools")
-install_github("fritzbayer/graphClust")
+install_github("fritzbayer/graphClust", auth_token="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")
 ```
 
 `graphClust` requires R `>= 3.5`, and depends on 
