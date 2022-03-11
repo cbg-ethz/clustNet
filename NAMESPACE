@@ -2,3 +2,12 @@
 
 export(graphCluster)
 export(graphClusterParallel)
+import(ggplot2)
+importFrom(BiDAG,graph2m)
+importFrom(BiDAG,m2graph)
+importFrom(RBGL,tsort)
+importFrom(grDevices,rgb)
+importFrom(pcalg,randDAG)
+importFrom(reshape2,melt)
+importFrom(stats,rbinom)
+importFrom(stats,runif)

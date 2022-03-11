@@ -1,3 +1,6 @@
+#' @importFrom BiDAG graph2m m2graph
+#' @importFrom pcalg randDAG
+#' @importFrom RBGL tsort
 generatebinaryBN <- function (n, ii, baseline, startadj=NULL,d=2) {
   set.seed(ii)
   maxneib<-5
@@ -35,7 +38,8 @@ generatebinaryBN <- function (n, ii, baseline, startadj=NULL,d=2) {
   return (res)
 }
 
-generatebinaryBN.data <- function (n,binaryBN,samplesize) {
+#' @importFrom stats rbinom
+generatebinaryBN.data <- function(n,binaryBN,samplesize){
   BNsample<-matrix(ncol=n,nrow=samplesize)
 
   for (k in 1:samplesize) {
@@ -207,7 +211,6 @@ generateBNs <- function(nnets, n, nbg, sseed, bgedges="same", baseline=c(0.3,0.5
 
   if (plotnets==TRUE){
     #plot BNs
-    par(mfrow=c(1,3))
     for (gg in 1:nnets){
       plot(BNsBG[[gg]]$DAG, attrs=list(node=list(fontsize=10, fixedsize=TRUE,
                                                height=0.5,width=0.5)))
@@ -217,7 +220,8 @@ generateBNs <- function(nnets, n, nbg, sseed, bgedges="same", baseline=c(0.3,0.5
   return(BNsBG)
 }
 
-generatebinaryBN.data.bggroups <- function (n, nbggroups, binaryBN,samplesize) {
+#' @importFrom stats rbinom
+generatebinaryBN.data.bggroups <- function (n, nbg, nbggroups, binaryBN,samplesize) {
 
   #simulate CPTs for the different groups of background nodes
   tempP <- array(runif(nbggroups*nbg, 0.05,0.95), c(nbggroups,nbg))
@@ -268,7 +272,7 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=N
         #set CPTs of background nodes for respective group
         tempP <- tempParray[gg,]
         for (bb in 1:nbg){
-          BNsBG[[nn]]$fp[[n+bb]] <- tempP[bb]
+          BNsBG[[nn]]$fp[[nvar+bb]] <- tempP[bb]
         }
         #simlate the data
         Datafull <- rbind(Datafull,generatebinaryBN.data(nvar,BNsBG[[nn]], ntempsamples))
@@ -298,7 +302,7 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=N
         #set CPTs of background nodes for respective group
         tempP <- tempParray[gg,]
         for (bb in 1:nbg){
-          BNsBG[[nn]]$fp[[n+bb]] <- tempP[bb]
+          BNsBG[[nn]]$fp[[nvar+bb]] <- tempP[bb]
         }
         #simlate the data
         Datafull <- rbind(Datafull,generatebinaryBN.data(nvar,BNsBG[[nn]], ntempsamples))

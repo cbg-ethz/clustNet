@@ -1,0 +1,34 @@
+---
+title: "graphClust"
+output: rmarkdown::html_vignette
+description: >
+  Graph-based clustering of binary data. Optional adjustment for covariates. 
+vignette: >
+  %\VignetteIndexEntry{graphClust}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(graphClust)
+```
+
+
+### Demonstration:
+Simulate binary data and learn clusters subsequently.
+
+```{r, eval = FALSE}
+# Simulate binary data
+ss <- c(400,500,600) # samples in each cluster
+myData <- sampleData(kclust = 3, Nvars = 20, sseed = 2, samplesizes = ss)
+
+# Graph-based clustering
+clusterRes <- graphCluster(myData, kclust = 3)
+```

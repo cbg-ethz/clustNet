@@ -1,7 +1,10 @@
+#' @import ggplot2
+#' @importFrom reshape2 melt
+#' @importFrom grDevices rgb
 bestAICsearch <- function(binaryMatrix, minK = 2, maxK, chiVec, startseed = 100, nIterations = 50,AICrange=100) {
-
-    require('ggplot2')
-    require('reshape2')
+#
+#     require('ggplot2')
+#     require('reshape2')
 
     ### Check input parameters
     if(missing(maxK)) stop("Need to input maximum number of clusters k.")
@@ -26,7 +29,10 @@ bestAICsearch <- function(binaryMatrix, minK = 2, maxK, chiVec, startseed = 100,
             chi<-1e-3 # replace 0 by 1e-3 to avoid taking log of 0
         }
         for(kk in minK:maxK){
-            bestCluster <- BBMMclusterEM::BBMMclusterEM(binaryMatrix = binaryMatrix, chi = chi, kclust = kk, startseed = startseed, nIterations = nIterations)
+            bestCluster <- BBMMclusterEM(binaryMatrix = binaryMatrix,
+                                                        chi = chi, kclust = kk,
+                                                        startseed = startseed,
+                                                        nIterations = nIterations)
 
             if(length(table(bestCluster$newclustermembership))==kk){
                 aics[kk - minK + 1,jj]<-bestCluster$testAIC
@@ -60,11 +66,13 @@ bestAICsearch <- function(binaryMatrix, minK = 2, maxK, chiVec, startseed = 100,
 
     #middycol<-c(0.8,0.2,0)
 
-    ggheatmap<-ggplot(data = meltdivergy, aes(Var1, Var2, fill = value))+
+    # ggheatmap<-ggplot(data = meltdivergy, aes(Var1, Var2, fill = value))+
+    ggheatmap<-ggplot(data = meltdivergy)+
         geom_tile() +
         xlab(expression(chi)) +
         ylab("k") +
-        scale_fill_gradient2(high =rgb(0.98,0.98,1), low = rgb(0,0.35,0.8), mid=rgb(0.49,0.665,0.9),space="Lab",na.value="grey75",
+        scale_fill_gradient2(high =rgb(0.98,0.98,1), low = rgb(0,0.35,0.8),
+                             mid=rgb(0.49,0.665,0.9),space="Lab",na.value="grey75",
                              midpoint=topaics/2,limit = c(0,topaics), name="AIC\nchange\n") +
         scale_y_continuous(breaks=c(minK:maxK)) +
         theme_minimal() +

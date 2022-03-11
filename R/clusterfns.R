@@ -9,7 +9,7 @@ checkmembership <- function(kclust,kclusttrue,truelabels,estmemb) {
       relabelmatrix[i,j]<-length(which(estlabels[[i]]%in%truelabels[[j]]))
     }
   }
-  rowcol<-solve_LSAP(relabelmatrix,TRUE)
+  rowcol<-clue::solve_LSAP(relabelmatrix,TRUE)
   res<-list()
   res$relabel<-as.vector(rowcol)
   res$ncorr<-0
@@ -19,6 +19,8 @@ checkmembership <- function(kclust,kclusttrue,truelabels,estmemb) {
   res$relabelmatrix<-relabelmatrix
   return(res)
 }
+
+#' @importFrom stats runif
 generatetriple<-function(n) {
   resmat<-matrix(nrow=n,ncol=3)
   for (i in 1:n) {
@@ -31,6 +33,8 @@ generatetriple<-function(n) {
   }
   return(resmat)
 }
+
+#' @importFrom stats runif
 generatefour<-function(n) {
   resmat<-matrix(nrow=n,ncol=4)
   for (i in 1:n) {
@@ -247,17 +251,17 @@ graphCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, binaryClust=
 
         #define score parameters
         if (nbg>0){
-          scorepar<-scoreparameters("bde",myData,
+          scorepar<-BiDAG::scoreparameters("bde",myData,
                                     weightvector=allrelativeprobabs[,k],
                                     bdepar=list(edgepf=edgepfy,chi=chixi), bgnodes=(n+1):(n+nbg))
         }else{
-          scorepar<-scoreparameters("bde",myData,
+          scorepar<-BiDAG::scoreparameters("bde",myData,
                                     weightvector=allrelativeprobabs[,k],
                                     bdepar=list(edgepf=edgepfy,chi=chixi))
         }
 
         #find MAP DAG using iterative order MCMC
-        maxfit<-iterativeMCMC(scorepar,addspace=clustercenters[[k]],verbose=FALSE)
+        maxfit<-BiDAG::iterativeMCMC(scorepar,addspace=clustercenters[[k]],verbose=FALSE)
         #store it
         clustercenters[[k]]<-maxfit$DAG
 
@@ -269,7 +273,7 @@ graphCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, binaryClust=
         coltots<-colSums(allrelativeprobabs) + chixi # add prior to clustersizes
         tauvec<-coltots/sum(coltots)
         for (k in 1:kclust) {
-          scorepar<-scoreparameters("bde",as.data.frame(myData),
+          scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData),
                                     weightvector=allrelativeprobabs[,k], bdepar=list(edgepf=edgepfy,chi=chixi))
           scorepar$n <- n # to avoid to scoring over background nodes
           scoresagainstclusters[,k]<-BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]])
@@ -347,7 +351,7 @@ graphClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, bi
 
   # parallel computing of clustering
   nSeeds <- length(EMseeds)
-  clusterResAll <- mclapply(1:nSeeds, function(i) {
+  clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
     print(paste("Clustering iteration", i, "of", nSeeds))
     clusterRes <- graphCluster(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], binaryClust=binaryClust)
     return(clusterRes)
