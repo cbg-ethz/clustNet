@@ -10,7 +10,7 @@ The latest development version of `graphClust` can be found on GitHub
 [here](https://github.com/fritzbayer/graphClust).
 
 In order to install the package, it suffices to launch
-`R CMD INSTALL path/to/SubGroupSeparation`
+`R CMD INSTALL path/to/graphClust`
 from a terminal, or `make install` from within the package source folder.
 
 Being hosted on GitHub, it is possible to use the `install_github`
