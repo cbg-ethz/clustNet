@@ -3,6 +3,8 @@ netClust: Network-based clustering with optional covariate adjustment
 
 `netClust` is an R package for network-based clustering of binary data using a Bayesian network mixture model and optional covariate adjustment.
 
+![alt text](https://github.com/fritzbayer/netclust/blob/netClust1.png?raw=true)
+
 Installation
 -----------
 
