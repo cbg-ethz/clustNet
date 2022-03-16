@@ -1,4 +1,4 @@
-graphClust: Graph-based clustering of binary data with optional covariate adjustment
+graphClust: Graph-based clustering with optional covariate adjustment
 -----------
 
 `graphClust` is an R package for graph-based clustering of binary data using a Bayesian network mixture model and optional covariate adjustment.
