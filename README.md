@@ -1,4 +1,4 @@
-![alt text](https://github.com/fritzbayer/netClust/blob/main/blob/netClust2.png?raw=true)
+![alt text](https://github.com/fritzbayer/netClust/blob/main/blob/netClust3.png?raw=true)
 
 
 netClust: Network-based clustering with optional covariate adjustment
@@ -24,3 +24,7 @@ install_github("fritzbayer/netClust", auth_token="ghp_ENSDG39i5MZ9KXimcAf9VES6RE
 `netClust` requires R `>= 3.5`, and depends on 
 `BiDAG` (>= 2.0.2), `ggplot2`, `reshape2`, `pcalg`,
 `RBGL`, `clue` and `grDevices`.
+
+netClust can be used to cluster mutational data with covariates. 
+
+![alt text](https://github.com/fritzbayer/netClust/blob/main/blob/netClust2.png?raw=true)
