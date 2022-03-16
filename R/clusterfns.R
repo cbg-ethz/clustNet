@@ -123,20 +123,20 @@ reassignsamplesprop <- function(samplescores,numsamps,gamma){
 }
 
 
-#' @title graphCluster
+#' @title netCluster
 #'
-#' @description Graph-based clustering
+#' @description Network-based clustering
 #'
 #' @param myData Data to be clustered
 #' @param kclust Number of clusters
 #' @param nbg Number of covariates
 #' @param itLim Maximum number of iterations
 #' @param EMseeds seeds
-#' @param binaryClust binary clustering before graph-based clustering (TRUE by default)
+#' @param binaryClust binary clustering before network-based clustering (TRUE by default)
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-graphCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, binaryClust=TRUE){
+netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, binaryClust=TRUE){
 
   # Binary clustering
   startseed <- EMseeds[1]
@@ -334,26 +334,26 @@ getBestSeed <- function(assignprogress){
 }
 
 
-#' @title graphClusterParallel
+#' @title netClusterParallel
 #'
-#' @description Graph-based clustering of multiple seeds using parallel computing
+#' @description Network-based clustering of multiple seeds using parallel computing
 #'
 #' @param myData Data to be clustered
 #' @param kclust Number of clusters
 #' @param nbg Number of covariates
 #' @param itLim Maximum number of iterations
 #' @param EMseeds seeds
-#' @param binaryClust binary clustering before graph-based clustering (TRUE by default)
+#' @param binaryClust binary clustering before network-based clustering (TRUE by default)
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-graphClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, binaryClust=TRUE){
+netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, binaryClust=TRUE){
 
   # parallel computing of clustering
   nSeeds <- length(EMseeds)
   clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
     print(paste("Clustering iteration", i, "of", nSeeds))
-    clusterRes <- graphCluster(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], binaryClust=binaryClust)
+    clusterRes <- netCluster(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], binaryClust=binaryClust)
     return(clusterRes)
   }, mc.cores = nSeeds)
 

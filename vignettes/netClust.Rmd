@@ -1,10 +1,10 @@
 ---
-title: "graphClust"
+title: "netClust"
 output: rmarkdown::html_vignette
 description: >
-  Graph-based clustering of binary data. Optional adjustment for covariates. 
+  Network-based clustering of binary data. Optional adjustment for covariates. 
 vignette: >
-  %\VignetteIndexEntry{graphClust}
+  %\VignetteIndexEntry{netClust}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(graphClust)
+library(netClust)
 ```
 
 
@@ -29,6 +29,6 @@ Simulate binary data and learn clusters subsequently.
 ss <- c(400,500,600) # samples in each cluster
 myData <- sampleData(kclust = 3, Nvars = 20, sseed = 2, samplesizes = ss)
 
-# Graph-based clustering
-clusterRes <- graphCluster(myData, kclust = 3)
+# Network-based clustering
+clusterRes <- netCluster(myData, kclust = 3)
 ```
