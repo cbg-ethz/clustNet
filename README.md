@@ -6,9 +6,6 @@ graphClust: Graph-based clustering of binary data with optional covariate adjust
 Installation
 -----------
 
-The latest development version of `graphClust` can be found on GitHub
-[here](https://github.com/fritzbayer/graphClust).
-
 In order to install the package, it suffices to launch
 `R CMD INSTALL path/to/graphClust`
 from a terminal, or `make install` from within the package source folder.
