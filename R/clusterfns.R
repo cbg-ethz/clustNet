@@ -132,18 +132,18 @@ reassignsamplesprop <- function(samplescores,numsamps,gamma){
 #' @param nbg Number of covariates
 #' @param itLim Maximum number of iterations
 #' @param EMseeds seeds
-#' @param binaryClust binary clustering before network-based clustering (TRUE by default)
+#' @param BBMMClust binary clustering before network-based clustering (TRUE by default)
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, binaryClust=TRUE){
+netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE){
 
   # Binary clustering
   startseed <- EMseeds[1]
   nIterations <- 10
   chi <- 1 # pseudocounts for the Beta prior
 
-  if(binaryClust){
+  if(BBMMClust){
     binClust <- BBMMclusterEM(binaryMatrix = myData, chi = chi, kclust = kclust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
     newallrelativeprobabs <- binClust$relativeweights
     newclustermembership <- binClust$newclustermembership
@@ -211,7 +211,7 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, binaryClust=TR
     }
 
 
-    if(!binaryClust){
+    if(!BBMMClust){
       #generate random assignment of belonging to each cluster for each sample
       newallrelativeprobabs<-generatetriple(ss)
       newclustermembership<-reassignsamples(newallrelativeprobabs,nrow(myData))
@@ -306,7 +306,7 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, binaryClust=TR
     # relabs[[s]]<-res$relabel
   }
 
-  return(list("clustermembership"=newclustermembership,"assignprogress"=assignprogress))
+  return(list("clustermembership"=newclustermembership,"assignprogress"=assignprogress), "DAGs"=clustercenters)
 }
 
 
@@ -343,17 +343,17 @@ getBestSeed <- function(assignprogress){
 #' @param nbg Number of covariates
 #' @param itLim Maximum number of iterations
 #' @param EMseeds seeds
-#' @param binaryClust binary clustering before network-based clustering (TRUE by default)
+#' @param BBMMClust binary clustering before network-based clustering (TRUE by default)
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, binaryClust=TRUE){
+netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE){
 
   # parallel computing of clustering
   nSeeds <- length(EMseeds)
   clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
     print(paste("Clustering iteration", i, "of", nSeeds))
-    clusterRes <- netCluster(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], binaryClust=binaryClust)
+    clusterRes <- netCluster(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust)
     return(clusterRes)
   }, mc.cores = nSeeds)
 
@@ -362,6 +362,6 @@ netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, bina
   bestRes <- clusterResAll[[bestSeed]]
 
   # return results of best seed
-  return(list("clustermembership"=bestRes$clustermembership,"assignprogress"=bestRes$assignprogress, "bestSeed"=bestSeed))
+  return(list("clustermembership"=bestRes$clustermembership,"assignprogress"=bestRes$assignprogress,"DAGs"=bestRes$DAGs,"bestSeed"=bestSeed))
 }
 
