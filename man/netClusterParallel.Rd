@@ -10,7 +10,7 @@ netClusterParallel(
   nbg = 0,
   itLim = 20,
   EMseeds = 1:5,
-  binaryClust = TRUE
+  BBMMClust = TRUE
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ netClusterParallel(
 
 \item{EMseeds}{seeds}
 
-\item{binaryClust}{binary clustering before network-based clustering (TRUE by default)}
+\item{BBMMClust}{binary clustering before network-based clustering (TRUE by default)}
 }
 \value{
 a list containing the clusterMemberships and "assignprogress"

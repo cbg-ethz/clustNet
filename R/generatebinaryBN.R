@@ -314,6 +314,17 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=N
   return(list("sampleList"=sampleList,"Datafull"=Datafull))
 }
 
+#' @title sampleData
+#'
+#' @description Sample binary data from different Bayes nets
+#'
+#' @param kclust Number of clusters
+#' @param Nvars Number of variables
+#' @param sseed Seed
+#' @param samplesizes Sample sizes
+#'
+#' @return sampled binary data
+#' @export
 sampleData <- function(kclust=3, Nvars=20, sseed=1, samplesizes=c(300,400,500)){
   # sample binary data from different Bayes nets
   sampledDat <- c()

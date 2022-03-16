@@ -2,11 +2,13 @@
 
 export(netCluster)
 export(netClusterParallel)
+export(sampleData)
 import(ggplot2)
 importFrom(BiDAG,graph2m)
 importFrom(BiDAG,m2graph)
 importFrom(RBGL,tsort)
 importFrom(grDevices,rgb)
+importFrom(parallel,mclapply)
 importFrom(pcalg,randDAG)
 importFrom(reshape2,melt)
 importFrom(stats,rbinom)

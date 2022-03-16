@@ -49,48 +49,49 @@ generatefour<-function(n) {
   return(resmat)
 }
 
-propersample <- function(x){if(length(x)==1) x else sample(x,1)}
+# propersample <- function(x){if(length(x)==1) x else sample(x,1)}
 
-calcloglike <- function(samplescores,tau) {
- # samplescores<-t(samplescores)
-  maxscorey<-apply(samplescores,1,max) # find the max of each column
-  loglike<-sum(log(colSums(t(exp(samplescores-maxscorey))*tau))+maxscorey) # remove max for numerical stability and exponentiate
-  return(loglike)
-}
+# calcloglike <- function(samplescores,tau) {
+#  # samplescores<-t(samplescores)
+#   maxscorey<-apply(samplescores,1,max) # find the max of each column
+#   loglike<-sum(log(colSums(t(exp(samplescores-maxscorey))*tau))+maxscorey) # remove max for numerical stability and exponentiate
+#   return(loglike)
+# }
 
-reassignsamples <- function(samplescores,numsamps){
-  newclustermembership <-rep(0,numsamps) # to store the new cluster
-  for(s in 1:numsamps){ # run through the samples
-    clusterscores<-samplescores[s,]
-    maxscorey<-max(clusterscores) # take the maximum
-    maxscoreelem<-which(clusterscores==maxscorey)
-    newclustermembership[s]<-propersample(maxscoreelem)
-  }
-  return(newclustermembership)
-}
-relativeprobs <- function(samplescores,numsamps){
-  relativeprobabs <-rep(0,numsamps) # to store the relative probabilities
-  for(s in 1:numsamps){ # run through the samples
-    clusterscores<-samplescores[s,]
-    maxscorey<-max(clusterscores) # take the maximum
-    shifty<-exp(clusterscores-maxscorey)
-    rescaley<-shifty/sum(shifty)
-    relativeprobabs[s]<-max(rescaley) # relative probabilities
-  }
-  return(relativeprobabs)
-}
+# reassignsamples <- function(samplescores,numsamps){
+#   newclustermembership <-rep(0,numsamps) # to store the new cluster
+#   for(s in 1:numsamps){ # run through the samples
+#     clusterscores<-samplescores[s,]
+#     maxscorey<-max(clusterscores) # take the maximum
+#     maxscoreelem<-which(clusterscores==maxscorey)
+#     newclustermembership[s]<-propersample(maxscoreelem)
+#   }
+#   return(newclustermembership)
+# }
 
-allrelativeprobs <- function(samplescores,numsamps){
-  relativeprobabs <-samplescores # to store the relative probabilities
-  for(s in 1:numsamps){ # run through the samples
-    clusterscores<-samplescores[s,]
-    maxscorey<-max(clusterscores) # take the maximum
-    shifty<-exp(clusterscores-maxscorey)
-    rescaley<-shifty/sum(shifty)
-    relativeprobabs[s,]<-rescaley # relative probabilities
-  }
-  return(relativeprobabs)
-}
+# relativeprobs <- function(samplescores,numsamps){
+#   relativeprobabs <-rep(0,numsamps) # to store the relative probabilities
+#   for(s in 1:numsamps){ # run through the samples
+#     clusterscores<-samplescores[s,]
+#     maxscorey<-max(clusterscores) # take the maximum
+#     shifty<-exp(clusterscores-maxscorey)
+#     rescaley<-shifty/sum(shifty)
+#     relativeprobabs[s]<-max(rescaley) # relative probabilities
+#   }
+#   return(relativeprobabs)
+# }
+
+# allrelativeprobs <- function(samplescores,numsamps){
+#   relativeprobabs <-samplescores # to store the relative probabilities
+#   for(s in 1:numsamps){ # run through the samples
+#     clusterscores<-samplescores[s,]
+#     maxscorey<-max(clusterscores) # take the maximum
+#     shifty<-exp(clusterscores-maxscorey)
+#     rescaley<-shifty/sum(shifty)
+#     relativeprobabs[s,]<-rescaley # relative probabilities
+#   }
+#   return(relativeprobabs)
+# }
 
 relativeprobswithtau <- function(sampleprobs,tau){
   temp<-tau*t(sampleprobs)
@@ -147,7 +148,7 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
     binClust <- BBMMclusterEM(binaryMatrix = myData, chi = chi, kclust = kclust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
     newallrelativeprobabs <- binClust$relativeweights
     newclustermembership <- binClust$newclustermembership
-    newclustermembership <- reassignsamples(newallrelativeprobabs,nrow(myData))
+    newclustermembership <- reassignsamples(newallrelativeprobabs)
   }
 
   # # number of iterations (and respective seeds)
@@ -214,7 +215,7 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
     if(!BBMMClust){
       #generate random assignment of belonging to each cluster for each sample
       newallrelativeprobabs<-generatetriple(ss)
-      newclustermembership<-reassignsamples(newallrelativeprobabs,nrow(myData))
+      newclustermembership<-reassignsamples(newallrelativeprobabs)
     }
 
 
@@ -279,12 +280,12 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
           scoresagainstclusters[,k]<-BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]])
           scorepar$n <- n+nbg # recet after scoring
         }
-        newallrelativeprobabsnotau<-allrelativeprobs(scoresagainstclusters,nrow(myData))
+        newallrelativeprobabsnotau<-allrelativeprobs(scoresagainstclusters)
         newallrelativeprobabs<-relativeprobswithtau(newallrelativeprobabsnotau,tauvec)
       }
 
       diffy<-sum((allprobprev-newallrelativeprobabs)^2)
-      newclustermembership<-reassignsamples(newallrelativeprobabs,nrow(myData))
+      newclustermembership<-reassignsamples(newallrelativeprobabs)
       # res<-checkmembership(kclust,kclusttrue=3,truelabels,newclustermembership)
       # assignprogress_local$corrvec[cnt]<-res$ncorr
       assignprogress_local$likel[cnt]<-calcloglike(scoresagainstclusters,tauvec)
@@ -306,7 +307,7 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
     # relabs[[s]]<-res$relabel
   }
 
-  return(list("clustermembership"=newclustermembership,"assignprogress"=assignprogress), "DAGs"=clustercenters)
+  return(list("clustermembership"=newclustermembership,"assignprogress"=assignprogress, "DAGs"=clustercenters))
 }
 
 
@@ -347,6 +348,7 @@ getBestSeed <- function(assignprogress){
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
+#'
 netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE){
 
   # parallel computing of clustering
