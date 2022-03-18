@@ -137,7 +137,7 @@ reassignsamplesprop <- function(samplescores,numsamps,gamma){
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE){
+netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL){
 
   # Binary clustering
   startseed <- EMseeds[1]
@@ -274,7 +274,7 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
         coltots<-colSums(allrelativeprobabs) + chixi # add prior to clustersizes
         tauvec<-coltots/sum(coltots)
         for (k in 1:kclust) {
-          scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData),
+          scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
                                     weightvector=allrelativeprobabs[,k], bdepar=list(edgepf=edgepfy,chi=chixi))
           scorepar$n <- n # to avoid to scoring over background nodes
           scoresagainstclusters[,k]<-BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]])
@@ -355,7 +355,7 @@ netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMM
   nSeeds <- length(EMseeds)
   clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
     print(paste("Clustering iteration", i, "of", nSeeds))
-    clusterRes <- netCluster(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust)
+    clusterRes <- netCluster(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=NULL)
     return(clusterRes)
   }, mc.cores = nSeeds)
 
