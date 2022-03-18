@@ -10,7 +10,8 @@ netCluster(
   nbg = 0,
   itLim = 20,
   EMseeds = 1,
-  BBMMClust = TRUE
+  BBMMClust = TRUE,
+  edgepmat = NULL
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ netCluster(
 \item{EMseeds}{seeds}
 
 \item{BBMMClust}{binary clustering before network-based clustering (TRUE by default)}
+
+\item{edgepmat}{a matrix of penalized edges in the search space}
 }
 \value{
 a list containing the clusterMemberships and "assignprogress"

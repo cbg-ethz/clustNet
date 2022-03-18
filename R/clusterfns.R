@@ -134,6 +134,7 @@ reassignsamplesprop <- function(samplescores,numsamps,gamma){
 #' @param itLim Maximum number of iterations
 #' @param EMseeds seeds
 #' @param BBMMClust binary clustering before network-based clustering (TRUE by default)
+#' @param edgepmat a matrix of penalized edges in the search space
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
@@ -252,11 +253,11 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
 
         #define score parameters
         if (nbg>0){
-          scorepar<-BiDAG::scoreparameters("bde",myData,
+          scorepar<-BiDAG::scoreparameters("bde",myData, edgepmat = edgepmat,
                                     weightvector=allrelativeprobabs[,k],
                                     bdepar=list(edgepf=edgepfy,chi=chixi), bgnodes=(n+1):(n+nbg))
         }else{
-          scorepar<-BiDAG::scoreparameters("bde",myData,
+          scorepar<-BiDAG::scoreparameters("bde",myData, edgepmat = edgepmat,
                                     weightvector=allrelativeprobabs[,k],
                                     bdepar=list(edgepf=edgepfy,chi=chixi))
         }
@@ -345,17 +346,18 @@ getBestSeed <- function(assignprogress){
 #' @param itLim Maximum number of iterations
 #' @param EMseeds seeds
 #' @param BBMMClust binary clustering before network-based clustering (TRUE by default)
+#' @param edgepmat a matrix of penalized edges in the search space
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
 #'
-netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE){
+netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL){
 
   # parallel computing of clustering
   nSeeds <- length(EMseeds)
   clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
     print(paste("Clustering iteration", i, "of", nSeeds))
-    clusterRes <- netCluster(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=NULL)
+    clusterRes <- netCluster(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat)
     return(clusterRes)
   }, mc.cores = nSeeds)
 
