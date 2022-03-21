@@ -132,13 +132,14 @@ reassignsamplesprop <- function(samplescores,numsamps,gamma){
 #' @param kclust Number of clusters
 #' @param nbg Number of covariates
 #' @param itLim Maximum number of iterations
-#' @param EMseeds seeds
-#' @param BBMMClust binary clustering before network-based clustering (TRUE by default)
-#' @param edgepmat a matrix of penalized edges in the search space
+#' @param EMseeds Seeds
+#' @param BBMMClust Binary clustering before network-based clustering (TRUE by default)
+#' @param edgepmat Matrix of penalized edges in the search space
+#' @param bdepar Hyperparameters for structure learning (BDE score)
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL){
+netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
 
   # Binary clustering
   startseed <- EMseeds[1]
@@ -167,12 +168,12 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
   #number of variables (without covariates)
   n<-nn-nbg
 
-  #prior pseudo counts
-  chixi<-0.5
+  # #prior pseudo counts
+  # chixi<-0.5
   #define when EM converges
   err<-1e-6
-  #edge penalization factor
-  edgepfy<-2
+  # #edge penalization factor
+  # edgepfy<-16
   #define different seeds to run EM
   # EMseeds<-c(101,102,103,104,105)
   # EMseeds<-c(100)+c(1:nSeeds)
@@ -255,11 +256,11 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
         if (nbg>0){
           scorepar<-BiDAG::scoreparameters("bde",myData, edgepmat = edgepmat,
                                     weightvector=allrelativeprobabs[,k],
-                                    bdepar=list(edgepf=edgepfy,chi=chixi), bgnodes=(n+1):(n+nbg))
+                                    bdepar=bdepar, bgnodes=(n+1):(n+nbg))
         }else{
           scorepar<-BiDAG::scoreparameters("bde",myData, edgepmat = edgepmat,
                                     weightvector=allrelativeprobabs[,k],
-                                    bdepar=list(edgepf=edgepfy,chi=chixi))
+                                    bdepar=bdepar
         }
 
         #find MAP DAG using iterative order MCMC
@@ -275,8 +276,15 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
         coltots<-colSums(allrelativeprobabs) + chixi # add prior to clustersizes
         tauvec<-coltots/sum(coltots)
         for (k in 1:kclust) {
-          scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
-                                    weightvector=allrelativeprobabs[,k], bdepar=list(edgepf=edgepfy,chi=chixi))
+          if (nbg>0){
+            scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
+                                             weightvector=allrelativeprobabs[,k],
+                                             bdepar=bdepar, bgnodes=(n+1):(n+nbg))
+          }else{
+            scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
+                                             weightvector=allrelativeprobabs[,k],
+                                             bdepar=bdepar
+          }
           scorepar$n <- n # to avoid to scoring over background nodes
           scoresagainstclusters[,k]<-BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]])
           scorepar$n <- n+nbg # recet after scoring
@@ -347,17 +355,18 @@ getBestSeed <- function(assignprogress){
 #' @param EMseeds seeds
 #' @param BBMMClust binary clustering before network-based clustering (TRUE by default)
 #' @param edgepmat a matrix of penalized edges in the search space
+#' @param bdepar Hyperparameters for structure learning (BDE score)
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
 #'
-netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL){
+netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
 
   # parallel computing of clustering
   nSeeds <- length(EMseeds)
   clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
     print(paste("Clustering iteration", i, "of", nSeeds))
-    clusterRes <- netCluster(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat)
+    clusterRes <- netCluster(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat, bdepar=bdepar)
     return(clusterRes)
   }, mc.cores = nSeeds)
 
