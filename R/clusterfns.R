@@ -143,7 +143,7 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
   # Binary clustering
   startseed <- EMseeds[1]
   nIterations <- 10
-  chi <- 1 # pseudocounts for the Beta prior
+  chi <- 0.5 # pseudocounts for the Beta prior
 
   if(BBMMClust){
     binClust <- BBMMclusterEM(binaryMatrix = myData, chi = chi, kclust = kclust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
