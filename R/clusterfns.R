@@ -260,7 +260,7 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
         }else{
           scorepar<-BiDAG::scoreparameters("bde",myData, edgepmat = edgepmat,
                                     weightvector=allrelativeprobabs[,k],
-                                    bdepar=bdepar
+                                    bdepar=bdepar)
         }
 
         #find MAP DAG using iterative order MCMC
