@@ -283,7 +283,7 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
           }else{
             scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
                                              weightvector=allrelativeprobabs[,k],
-                                             bdepar=bdepar
+                                             bdepar=bdepar)
           }
           scorepar$n <- n # to avoid to scoring over background nodes
           scoresagainstclusters[,k]<-BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]])
