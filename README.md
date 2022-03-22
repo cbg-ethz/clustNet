@@ -21,5 +21,5 @@ install_github("fritzbayer/netClust", auth_token="ghp_ENSDG39i5MZ9KXimcAf9VES6RE
 ```
 
 `netClust` requires R `>= 3.5`, and depends on 
-`BiDAG` (>= 2.0.2), `ggplot2`, `reshape2`, `pcalg`,
+`BiDAG` (>= 2.0.2), `reshape2`, `pcalg`,
 `RBGL`, `clue` and `grDevices`.
