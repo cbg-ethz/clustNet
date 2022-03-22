@@ -230,7 +230,7 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
     while (diffy>err&cnt<itLim) {
       allrelativeprobabs<-newallrelativeprobabs
       allprobprev<-newallrelativeprobabs
-      coltots<-colSums(allrelativeprobabs) + chixi # add prior to clustersizes
+      coltots<-colSums(allrelativeprobabs) + bdepar$chi # add prior to clustersizes
       tauvec<-coltots/sum(coltots)
 
       #outer EM cycle, learning cluster centers
@@ -273,7 +273,7 @@ netCluster <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE
       #internal EM cycle, estimating parameters
       for (i in 1:nit.internal) {
         allrelativeprobabs<-newallrelativeprobabs
-        coltots<-colSums(allrelativeprobabs) + chixi # add prior to clustersizes
+        coltots<-colSums(allrelativeprobabs) + bdepar$chi # add prior to clustersizes
         tauvec<-coltots/sum(coltots)
         for (k in 1:kclust) {
           if (nbg>0){
@@ -357,7 +357,7 @@ getBestSeed <- function(assignprogress){
 #' @param edgepmat a matrix of penalized edges in the search space
 #' @param bdepar Hyperparameters for structure learning (BDE score)
 #'
-#' @return a list containing the clusterMemberships and "assignprogress"
+#' @return a list containing the clusterMemberships, DAGs, best seed and "assignprogress"
 #' @export
 #'
 netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
@@ -371,7 +371,8 @@ netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMM
   }, mc.cores = nSeeds)
 
   # get best performing seed
-  bestSeed <- getBestSeed(lapply(clusterResAll, function(x) x[[2]][[1]]))
+  assignprogressList <- lapply(clusterResAll, function(x) x[[2]][[1]])
+  bestSeed <- getBestSeed(assignprogressList)
   bestRes <- clusterResAll[[bestSeed]]
 
   # return results of best seed

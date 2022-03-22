@@ -11,7 +11,8 @@ netCluster(
   itLim = 20,
   EMseeds = 1,
   BBMMClust = TRUE,
-  edgepmat = NULL
+  edgepmat = NULL,
+  bdepar = list(chi = 0.5, edgepf = 16)
 )
 }
 \arguments{
@@ -23,11 +24,13 @@ netCluster(
 
 \item{itLim}{Maximum number of iterations}
 
-\item{EMseeds}{seeds}
+\item{EMseeds}{Seeds}
 
-\item{BBMMClust}{binary clustering before network-based clustering (TRUE by default)}
+\item{BBMMClust}{Binary clustering before network-based clustering (TRUE by default)}
 
-\item{edgepmat}{a matrix of penalized edges in the search space}
+\item{edgepmat}{Matrix of penalized edges in the search space}
+
+\item{bdepar}{Hyperparameters for structure learning (BDE score)}
 }
 \value{
 a list containing the clusterMemberships and "assignprogress"

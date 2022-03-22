@@ -8,7 +8,7 @@ bestAICsearch(
   binaryMatrix,
   minK = 2,
   maxK = 5,
-  chiVec = c(0, 0.5, 1, 2, 3),
+  chiVec = c(0.001, 0.5, 1, 2, 3),
   startseed = 100,
   nIterations = 50,
   AICrange = 100

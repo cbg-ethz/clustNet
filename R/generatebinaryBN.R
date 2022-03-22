@@ -6,7 +6,7 @@ generatebinaryBN <- function (n, ii, baseline, startadj=NULL,d=2) {
   maxneib<-5
   if (is.null(startadj)) {
   while(maxneib>4) {
-    mydag<-randDAG(n, d, method ="power")
+    mydag<-pcalg::randDAG(n, d, method ="power")
     adj<-graph2m(mydag)
     maxneib<-max(apply(adj,2,sum))
   }

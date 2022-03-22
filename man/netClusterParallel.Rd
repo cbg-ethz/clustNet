@@ -11,7 +11,8 @@ netClusterParallel(
   itLim = 20,
   EMseeds = 1:5,
   BBMMClust = TRUE,
-  edgepmat = NULL
+  edgepmat = NULL,
+  bdepar = list(chi = 0.5, edgepf = 16)
 )
 }
 \arguments{
@@ -28,9 +29,11 @@ netClusterParallel(
 \item{BBMMClust}{binary clustering before network-based clustering (TRUE by default)}
 
 \item{edgepmat}{a matrix of penalized edges in the search space}
+
+\item{bdepar}{Hyperparameters for structure learning (BDE score)}
 }
 \value{
-a list containing the clusterMemberships and "assignprogress"
+a list containing the clusterMemberships, DAGs, best seed and "assignprogress"
 }
 \description{
 Network-based clustering of multiple seeds using parallel computing
