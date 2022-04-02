@@ -31,7 +31,7 @@ Example
 ```{r eval=FALSE}
 library(netClust)
 
-# Simulate binary data of 3 clusters
+# Simulate binary data from 3 clusters
 ss <- c(400,500,600) # samples in each cluster
 myData <- sampleData(kclust = 3, Nvars = 20, sseed = 2, samplesizes = ss)
 
