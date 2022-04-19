@@ -23,3 +23,18 @@ install_github("fritzbayer/netClust", auth_token="ghp_ENSDG39i5MZ9KXimcAf9VES6RE
 `netClust` requires R `>= 3.5`, and depends on 
 `BiDAG` (>= 2.0.2), `reshape2`, `pcalg`,
 `RBGL`, `clue` and `grDevices`.
+
+
+Example
+-------
+
+```{r eval=FALSE}
+library(netClust)
+
+# Simulate binary data from 3 clusters
+ss <- c(400,500,600) # samples in each cluster
+myData <- sampleData(kclust = 3, Nvars = 20, sseed = 2, samplesizes = ss)
+
+# Network-based clustering
+clusterRes <- netCluster(myData, kclust = 3)
+```
