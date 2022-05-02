@@ -572,3 +572,40 @@ netClust <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, 
   return(list("clustermembership"=newclustermembership,"assignprogress"=assignprogress, "DAGs"=clustercenters))
 }
 
+
+#' @title netClustParallel
+#'
+#' @description Network-based clustering of multiple seeds using parallel computing
+#'
+#' @param myData Data to be clustered
+#' @param kclust Number of clusters
+#' @param nbg Number of covariates
+#' @param itLim Maximum number of iterations
+#' @param EMseeds seeds
+#' @param BBMMClust binary clustering before network-based clustering (TRUE by default)
+#' @param edgepmat a matrix of penalized edges in the search space
+#' @param bdepar Hyperparameters for structure learning (BDE score)
+#'
+#' @return a list containing the clusterMemberships, DAGs, best seed and "assignprogress"
+#' @export
+#'
+netClustParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
+
+  # parallel computing of clustering
+  nSeeds <- length(EMseeds)
+  clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
+    print(paste("Clustering iteration", i, "of", nSeeds))
+    clusterRes <- netClust(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat, bdepar=bdepar)
+    return(clusterRes)
+  }, mc.cores = nSeeds)
+
+  # get best performing seed
+  assignprogressList <- lapply(clusterResAll, function(x) x[[2]][[1]])
+  bestSeed <- getBestSeed(assignprogressList)
+  bestRes <- clusterResAll[[bestSeed]]
+
+  # return results of best seed
+  return(list("clustermembership"=bestRes$clustermembership,"assignprogress"=bestRes$assignprogress,"DAGs"=bestRes$DAGs,"bestSeed"=bestSeed))
+}
+
+

@@ -2,6 +2,7 @@
 
 export(bestAICsearch)
 export(netClust)
+export(netClustParallel)
 export(netCluster)
 export(netClusterParallel)
 export(sampleData)
