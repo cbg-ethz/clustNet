@@ -1,4 +1,4 @@
-netClust: Network-based clustering with optional covariate adjustment
+netClust: Network-based clustering with causal covariate adjustment
 -----------
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
