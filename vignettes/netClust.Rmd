@@ -26,7 +26,7 @@ Simulate binary data and learn clusters subsequently.
 
 ```{r, eval = FALSE}
 # Simulate binary data
-ss <- c(400,500,600) # samples in each cluster
+ss <- c(400, 500, 600) # samples in each cluster
 my_data <- sampleData(kclust = 3, Nvars = 20, sseed = 2, samplesizes = ss)
 
 # Network-based clustering
