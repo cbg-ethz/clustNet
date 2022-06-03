@@ -31,7 +31,7 @@ my_data <- sampleData(kclust = 3, Nvars = 20, sseed = 2, samplesizes = ss)
 
 # Network-based clustering
 cluster_res_t <- netClust(myData, kclust = 3)
-cluster_res <- netCluster(myData, kclust = 3)
-cluster_res_test <- netClustParallel(myData, kclust = 3)
-cluster_res_p <- netClusterParallel(myData, kclust = 3)
+# cluster_res <- netCluster(myData, kclust = 3)
+# cluster_res_test <- netClustParallel(myData, kclust = 3)
+# cluster_res_p <- netClusterParallel(myData, kclust = 3)
 ```
