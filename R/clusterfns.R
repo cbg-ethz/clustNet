@@ -392,10 +392,11 @@ netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMM
 #' @param BBMMClust Binary clustering before network-based clustering (TRUE by default)
 #' @param edgepmat Matrix of penalized edges in the search space
 #' @param bdepar Hyperparameters for structure learning (BDE score)
+#' @param newallrelativeprobabs relative probability of cluster assignment of each sample
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-netClust <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
+netClust <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL){
 
   # Binary clustering
   startseed <- EMseeds[1]
@@ -470,11 +471,11 @@ netClust <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, 
     }
 
 
-    if(!BBMMClust){
-      #generate random assignment of belonging to each cluster for each sample
-      newallrelativeprobabs<-generatetriple(ss)
-      newclustermembership<-reassignsamples(newallrelativeprobabs)
-    }
+    # if(!BBMMClust){
+    #   #generate random assignment of belonging to each cluster for each sample
+    #   newallrelativeprobabs<-generatetriple(ss)
+    #   newclustermembership<-reassignsamples(newallrelativeprobabs)
+    # }
 
 
     # #learn how many samples were asssigned correctly

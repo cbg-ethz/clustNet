@@ -12,7 +12,8 @@ netClust(
   EMseeds = 1,
   BBMMClust = TRUE,
   edgepmat = NULL,
-  bdepar = list(chi = 0.5, edgepf = 16)
+  bdepar = list(chi = 0.5, edgepf = 16),
+  newallrelativeprobabs = NULL
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ netClust(
 \item{edgepmat}{Matrix of penalized edges in the search space}
 
 \item{bdepar}{Hyperparameters for structure learning (BDE score)}
+
+\item{newallrelativeprobabs}{relative probability of cluster assignment of each sample}
 }
 \value{
 a list containing the clusterMemberships and "assignprogress"
