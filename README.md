@@ -19,7 +19,7 @@ tool from an R session:
 
 ```{r eval=FALSE}
 library("devtools")
-install_github("fritzbayer/netClust", auth_token="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")
+install_github("fritzbayer/netClust", auth_token="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")
 ```
 
 `netClust` requires R `>= 3.5`, and depends on 
