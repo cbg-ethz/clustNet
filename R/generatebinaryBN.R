@@ -7,11 +7,11 @@ generatebinaryBN <- function (n, ii, baseline, startadj=NULL,d=2) {
   if (is.null(startadj)) {
   while(maxneib>4) {
     mydag<-pcalg::randDAG(n, d, method ="power")
-    adj<-graph2m(mydag)
+    adj<-BiDAG::graph2m(mydag)
     maxneib<-max(apply(adj,2,sum))
   }
   } else {mydag<-m2graph(startadj)}
-  adj<-graph2m(mydag)
+  adj<-BiDAG::graph2m(mydag)
   parlist<-list()
   np<-vector()
   for (i in 1:n) {
@@ -107,7 +107,7 @@ generatefactors <- function (nf,baselinevec,mapping) {
   return(prob0)
 }
 
-# functions added by Fritz Bayer
+# functions added by Fritz
 
 addBackgroundNodes <- function(n,nbg,sseed,startBN,probOfBG=0.3){
 
@@ -159,22 +159,22 @@ getBackgroundNodes <- function(n,nbg,sseed,probOfBG=0.3){
   return(tempBN)
 }
 
-generateBNs <- function(nnets, n, nbg, sseed, bgedges="same", baseline=c(0.3,0.5), plotnets=TRUE){
-  # simulate nnets Bayesian networks with n variables and nbg background variables
+generateBNs <- function(k_clust, n_vars, n_bg, sseed=1, bgedges="different", baseline=c(0.3,0.5), plotnets=TRUE){
+  # simulate k_clust Bayesian networks with n_vars variables and n_bg background variables
 
   set.seed(sseed)
 
   #generate 3 power-law networks each with 20 nodes
   BNs<-list()
-  for (gg in 1:nnets){
-    BNs[[gg]]<-generatebinaryBN(n, ii=sseed+gg,baseline=baseline)
+  for (gg in 1:k_clust){
+    BNs[[gg]]<-generatebinaryBN(n_vars, ii=sseed+gg,baseline=baseline)
   }
 
   # # plot the BN without background variables
   # if (plotnets==TRUE){
   #   #plot BNs
   #   par(mfrow=c(1,3))
-  #   for (gg in 1:nnets){
+  #   for (gg in 1:k_clust){
   #     plot(BNs[[gg]]$DAG, attrs=list(node=list(fontsize=10, fixedsize=TRUE,
   #                                             height=0.5,width=0.5)))
   #   }
@@ -184,22 +184,22 @@ generateBNs <- function(nnets, n, nbg, sseed, bgedges="same", baseline=c(0.3,0.5
 
     #generate 3 power-law networks each with 20 nodes and 3 background nodes
     BNsBG<-list()
-    for (gg in 1:nnets){
-      BNsBG[[gg]]<-addBackgroundNodes(n,nbg,sseed+gg,BNs[[gg]],probOfBG=0.3)
+    for (gg in 1:k_clust){
+      BNsBG[[gg]]<-addBackgroundNodes(n_vars,n_bg,sseed+gg,BNs[[gg]],probOfBG=0.3)
     }
   }else if (bgedges=="same"){
 
     # get nodes for background nodes
-    adjacenyMatrixBG <- getBackgroundNodes(n,nbg,sseed,probOfBG=0.3)
+    adjacenyMatrixBG <- getBackgroundNodes(n_vars,n_bg,sseed,probOfBG=0.3)
 
     # unify background nodes with cluster BN
     BNsBG<-list()
-    tempP <- runif(nbg, 0.05,0.95)
-    for (gg in 1:nnets){
-      BNsBG[[gg]]<-addFixedBackgroundNodes(n,nbg,sseed+gg,BNs[[gg]], adjacenyMatrixBG,probOfBG=0.3)
+    tempP <- runif(n_bg, 0.05,0.95)
+    for (gg in 1:k_clust){
+      BNsBG[[gg]]<-addFixedBackgroundNodes(n_vars,n_bg,sseed+gg,BNs[[gg]], adjacenyMatrixBG,probOfBG=0.3)
       # make CPTs of background nodes equal
-      for (bb in 1:nbg){
-        BNsBG[[gg]]$fp[[n+bb]] <- tempP[bb]
+      for (bb in 1:n_bg){
+        BNsBG[[gg]]$fp[[n_vars+bb]] <- tempP[bb]
       }
     }
 
@@ -209,10 +209,17 @@ generateBNs <- function(nnets, n, nbg, sseed, bgedges="same", baseline=c(0.3,0.5
 
   }
 
+  # set the prob of background nodes equal
+  if (n_bg>0){
+    for (ss in 2:k_clust){
+      BNsBG[[ss]]$fp[(n_vars+1):(n_vars+n_bg)] <- BNsBG[[1]]$fp[(n_vars+1):(n_vars+n_bg)]
+    }
+  }
+
   if (plotnets==TRUE){
     #plot BNs
-    for (gg in 1:nnets){
-      plot(BNsBG[[gg]]$DAG, attrs=list(node=list(fontsize=10, fixedsize=TRUE,
+    for (gg in 1:k_clust){
+      graph::plot(BNsBG[[gg]]$DAG, attrs=list(node=list(fontsize=10, fixedsize=TRUE,
                                                height=0.5,width=0.5)))
     }
   }
@@ -325,15 +332,56 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=N
 #'
 #' @return sampled binary data
 #' @export
-sampleData <- function(kclust=3, Nvars=20, sseed=1, samplesizes=c(300,400,500)){
+sampleData <- function(k_clust = 3, n_vars = 20, n_bg = 3, sseed = 1, n_samples = NULL){
   # sample binary data from different Bayes nets
-  sampledDat <- c()
-  for (jj in 1:kclust){
-    bnsseed <- sseed+jj
-    binaryBN <- generatebinaryBN(Nvars, ii=bnsseed,baseline=c(0.3,0.5), startadj=NULL,d=2)
-    tempData <- generatebinaryBN.data(Nvars,binaryBN, samplesize = samplesizes[jj])
-    sampledDat <- rbind(sampledDat,tempData)
+
+  # set sample size
+  n_samples <- c()
+  if (length(n_samples)==0){
+    for (ll in 1:k_clust){
+      n_samples <- c(n_samples, 100*ll+400)
+    }
   }
 
-  return(sampledDat)
+  # sample Bayes nets
+  sampled_data <- c()
+  bayesnets <- generateBNs(k_clust = k_clust, n_vars = n_vars, n_bg = n_bg, sseed = sseed, bgedges = "different", baseline = c(0.3,0.5), plotnets = FALSE)
+
+  # sample data from Bayes nets
+  for (jj in 1:k_clust){
+    bnsseed <- sseed+jj
+    binary_bn <- bayesnets[[jj]]
+    temp_data <- generatebinaryBN.data(n_vars+n_bg, binary_bn, samplesize = n_samples[jj])
+    sampled_data <- rbind(sampled_data,temp_data)
+  }
+
+  cluster_membership <- rep(1:k_clust, n_samples)
+  return(list(sampled_data = sampled_data, cluster_membership = cluster_membership, bayes_nets=bayesnets))
 }
+
+max_match <- function(membership1, membership2){
+  # find permutation with maximal match of assignment
+
+  permutations <- permn(1:n_bg)
+
+  n_matches <- c()
+  for (dd in 1:length(permutations)){
+
+    temp_perm <- permutations[[dd]]
+
+    perm_membership <- membership1
+    for (bb in 1:k_clust){
+      perm_membership <- replace(perm_membership, perm_membership==bb,temp_perm[bb]+n_bg)
+    }
+    perm_membership <- perm_membership-n_bg
+
+    n_matches[dd] <- sum(membership2==perm_membership)
+  }
+
+  temp_var <- which.max(n_matches)
+
+  permutations[temp_var]
+
+  return(max(n_matches))
+}
+
