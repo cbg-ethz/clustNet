@@ -385,3 +385,33 @@ max_match <- function(membership1, membership2){
   return(max(n_matches))
 }
 
+
+cluster_benchmark <- function(sampled_data, kclust = 3, nbg = 3, n_vars = 20, n_rep = 10){
+
+  correct_samples <- matrix(NA, n_rep, 3)
+  for (uu in 1:n_rep){
+    # cluster with covariate-adjusted framework
+    cluster_results1 <- netClust(sampled_data, kclust = k_clust, nbg = n_bg, EMseeds=uu)
+
+    correct_samples1 <- max_match(sampled_results$cluster_membership,cluster_results1$clustermembership)
+
+    # cluster all variables (variables and covariates)
+    cluster_results2 <- netClust(sampled_data, kclust = k_clust, nbg = 0, EMseeds=uu)
+
+    correct_samples2 <- max_match(sampled_results$cluster_membership,cluster_results2$clustermembership)
+
+    # cluster only variables without covariates
+    reduced_data <- sampled_data[,1:n_vars]
+    cluster_results3 <- netClust(reduced_data, kclust = k_clust, nbg = 0, EMseeds=uu)
+
+    correct_samples3 <- max_match(sampled_results$cluster_membership,cluster_results3$clustermembership)
+
+    correct_samples[uu,] <- c(correct_samples1, correct_samples2, correct_samples3)
+    # correct_fraction <- correct_samples/(dim(sampled_data)[1])
+  }
+
+  return(correct_samples)
+
+}
+
+
