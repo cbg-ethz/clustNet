@@ -391,7 +391,7 @@ cluster_benchmark <- function(sampled_data, sampled_membership, kclust = 3, nbg 
   correct_samples <- matrix(NA, n_rep, 9)
   for (uu in 1:n_rep){
 
-    set.seed(uu)
+    # set.seed(uu)
 
     ## cluster with covariate-adjusted framework
     cluster_results1 <- netClust(sampled_data, kclust = k_clust, nbg = n_bg, EMseeds=uu*100)
