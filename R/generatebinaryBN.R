@@ -1,8 +1,8 @@
 #' @importFrom BiDAG graph2m m2graph
 #' @importFrom pcalg randDAG
 #' @importFrom RBGL tsort
-generatebinaryBN <- function (n, ii, baseline, startadj=NULL,d=2) {
-  set.seed(ii)
+generatebinaryBN <- function (n, baseline, startadj=NULL,d=2) {
+  # set.seed(ii)
   maxneib<-5
   if (is.null(startadj)) {
   while(maxneib>4) {
@@ -109,9 +109,9 @@ generatefactors <- function (nf,baselinevec,mapping) {
 
 # functions added by F
 
-addBackgroundNodes <- function(n,nbg,sseed,startBN,probOfBG=0.3){
+addBackgroundNodes <- function(n,nbg,startBN,probOfBG=0.3){
 
-  set.seed(sseed)
+  # set.seed(sseed)
 
   # add background nodes
   tempBN <- rbind(startBN$adj, array(sample(c(1,0), n*nbg, replace = T, prob = c(probOfBG,1-probOfBG)),c(nbg,n)))
@@ -125,7 +125,7 @@ addBackgroundNodes <- function(n,nbg,sseed,startBN,probOfBG=0.3){
   colnames(tempBN)[n:(n+nbg)] <- as.character(n:(n+nbg))
 
   # make BN from adjacency matrix
-  endBN <- generatebinaryBN(n+nbg, ii=sseed,baseline=c(0.3,0.5),startadj = tempBN)
+  endBN <- generatebinaryBN(n+nbg,baseline=c(0.3,0.5),startadj = tempBN)
 
   return(endBN)
 }
@@ -136,14 +136,14 @@ addFixedBackgroundNodes <- function(n,nbg,sseed,startBN, adjacenyMatrixBG,probOf
   tempBN[1:n,1:n] <- startBN$adj
 
   # make BN from adjacency matrix
-  endBN <- generatebinaryBN(n+nbg, ii=sseed,baseline=c(0.3,0.5),startadj = tempBN)
+  endBN <- generatebinaryBN(n+nbg,baseline=c(0.3,0.5),startadj = tempBN)
 
   return(endBN)
 }
 
-getBackgroundNodes <- function(n,nbg,sseed,probOfBG=0.3){
+getBackgroundNodes <- function(n,nbg,probOfBG=0.3){
 
-  set.seed(sseed)
+  # set.seed(sseed)
 
   # add background nodes
   tempBN <- rbind(array(0,c(n,n)), array(sample(c(1,0), n*nbg, replace = T, prob = c(probOfBG,1-probOfBG)),c(nbg,n)))
@@ -159,15 +159,15 @@ getBackgroundNodes <- function(n,nbg,sseed,probOfBG=0.3){
   return(tempBN)
 }
 
-generateBNs <- function(k_clust, n_vars, n_bg, sseed=1, bgedges="different", baseline=c(0.3,0.5), plotnets=TRUE){
+generateBNs <- function(k_clust, n_vars, n_bg, bgedges="different", baseline=c(0.3,0.5), plotnets=TRUE){
   # simulate k_clust Bayesian networks with n_vars variables and n_bg background variables
 
-  set.seed(sseed)
+  # set.seed(sseed)
 
   #generate 3 power-law networks each with 20 nodes
   BNs<-list()
   for (gg in 1:k_clust){
-    BNs[[gg]]<-generatebinaryBN(n_vars, ii=sseed+gg,baseline=baseline)
+    BNs[[gg]]<-generatebinaryBN(n_vars,baseline=baseline)
   }
 
   # # plot the BN without background variables
@@ -180,37 +180,38 @@ generateBNs <- function(k_clust, n_vars, n_bg, sseed=1, bgedges="different", bas
   #   }
   # }
 
-  if (bgedges=="different"){
+  if(n_bg>0){
 
-    #generate 3 power-law networks each with 20 nodes and 3 background nodes
-    BNsBG<-list()
-    for (gg in 1:k_clust){
-      BNsBG[[gg]]<-addBackgroundNodes(n_vars,n_bg,sseed+gg,BNs[[gg]],probOfBG=0.3)
-    }
-  }else if (bgedges=="same"){
+    if (bgedges=="different"){
 
-    # get nodes for background nodes
-    adjacenyMatrixBG <- getBackgroundNodes(n_vars,n_bg,sseed,probOfBG=0.3)
-
-    # unify background nodes with cluster BN
-    BNsBG<-list()
-    tempP <- runif(n_bg, 0.05,0.95)
-    for (gg in 1:k_clust){
-      BNsBG[[gg]]<-addFixedBackgroundNodes(n_vars,n_bg,sseed+gg,BNs[[gg]], adjacenyMatrixBG,probOfBG=0.3)
-      # make CPTs of background nodes equal
-      for (bb in 1:n_bg){
-        BNsBG[[gg]]$fp[[n_vars+bb]] <- tempP[bb]
+      #generate 3 power-law networks each with 20 nodes and 3 background nodes
+      BNsBG<-list()
+      for (gg in 1:k_clust){
+        BNsBG[[gg]]<-addBackgroundNodes(n_vars,n_bg,BNs[[gg]],probOfBG=0.3)
       }
+    }else if (bgedges=="same"){
+
+      # get nodes for background nodes
+      adjacenyMatrixBG <- getBackgroundNodes(n_vars,n_bg,probOfBG=0.3)
+
+      # unify background nodes with cluster BN
+      BNsBG<-list()
+      tempP <- runif(n_bg, 0.05,0.95)
+      for (gg in 1:k_clust){
+        BNsBG[[gg]]<-addFixedBackgroundNodes(n_vars,n_bg,sseed+gg,BNs[[gg]], adjacenyMatrixBG,probOfBG=0.3)
+        # make CPTs of background nodes equal
+        for (bb in 1:n_bg){
+          BNsBG[[gg]]$fp[[n_vars+bb]] <- tempP[bb]
+        }
+      }
+
+    }else {
+
+      stop("Variable bgedges must be named either same or different")
+
     }
 
-  }else {
-
-    stop("Variable bgedges must be named either same or different")
-
-  }
-
-  # set the prob of background nodes equal
-  if (n_bg>0){
+    # set the prob of background nodes equal
     for (ss in 2:k_clust){
       BNsBG[[ss]]$fp[(n_vars+1):(n_vars+n_bg)] <- BNsBG[[1]]$fp[(n_vars+1):(n_vars+n_bg)]
     }
@@ -332,7 +333,7 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=N
 #'
 #' @return sampled binary data
 #' @export
-sampleData <- function(k_clust = 3, n_vars = 20, n_bg = 3, sseed = 1, n_samples = NULL){
+sampleData <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_samples = NULL){
   # sample binary data from different Bayes nets
 
   # set sample size
@@ -345,11 +346,11 @@ sampleData <- function(k_clust = 3, n_vars = 20, n_bg = 3, sseed = 1, n_samples 
 
   # sample Bayes nets
   sampled_data <- c()
-  bayesnets <- generateBNs(k_clust = k_clust, n_vars = n_vars, n_bg = n_bg, sseed = sseed, bgedges = "different", baseline = c(0.3,0.5), plotnets = FALSE)
+  bayesnets <- generateBNs(k_clust = k_clust, n_vars = n_vars, n_bg = n_bg, bgedges = "different", baseline = c(0.3,0.5), plotnets = FALSE)
 
   # sample data from Bayes nets
   for (jj in 1:k_clust){
-    bnsseed <- sseed+jj
+    # bnsseed <- sseed+jj
     binary_bn <- bayesnets[[jj]]
     temp_data <- generatebinaryBN.data(n_vars+n_bg, binary_bn, samplesize = n_samples[jj])
     sampled_data <- rbind(sampled_data,temp_data)
