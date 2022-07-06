@@ -107,7 +107,7 @@ generatefactors <- function (nf,baselinevec,mapping) {
   return(prob0)
 }
 
-# functions added by Fritz
+# functions added by F
 
 addBackgroundNodes <- function(n,nbg,sseed,startBN,probOfBG=0.3){
 
@@ -386,27 +386,62 @@ max_match <- function(membership1, membership2){
 }
 
 
-cluster_benchmark <- function(sampled_data, kclust = 3, nbg = 3, n_vars = 20, n_rep = 10){
+cluster_benchmark <- function(sampled_data, sampled_membership, kclust = 3, nbg = 3, n_vars = 20, n_rep = 10){
 
-  correct_samples <- matrix(NA, n_rep, 3)
+  correct_samples <- matrix(NA, n_rep, 9)
   for (uu in 1:n_rep){
-    # cluster with covariate-adjusted framework
-    cluster_results1 <- netClust(sampled_data, kclust = k_clust, nbg = n_bg, EMseeds=uu)
 
-    correct_samples1 <- max_match(sampled_results$cluster_membership,cluster_results1$clustermembership)
+    set.seed(uu)
 
-    # cluster all variables (variables and covariates)
-    cluster_results2 <- netClust(sampled_data, kclust = k_clust, nbg = 0, EMseeds=uu)
+    ## cluster with covariate-adjusted framework
+    cluster_results1 <- netClust(sampled_data, kclust = k_clust, nbg = n_bg, EMseeds=uu*100)
 
-    correct_samples2 <- max_match(sampled_results$cluster_membership,cluster_results2$clustermembership)
+    # correct_samples1 <- max_match(sampled_membership, cluster_results1$clustermembership)
+    correct_samples1 <- adjustedRandIndex(sampled_membership, cluster_results1$clustermembership)
+
+    ## cluster all variables (variables and covariates)
+    cluster_results2 <- netClust(sampled_data, kclust = k_clust, nbg = 0, EMseeds=uu*100)
+
+    # correct_samples2 <- max_match(sampled_membership, cluster_results2$clustermembership)
+    correct_samples2 <- adjustedRandIndex(sampled_membership, cluster_results2$clustermembership)
 
     # cluster only variables without covariates
     reduced_data <- sampled_data[,1:n_vars]
-    cluster_results3 <- netClust(reduced_data, kclust = k_clust, nbg = 0, EMseeds=uu)
+    cluster_results3 <- netClust(reduced_data, kclust = k_clust, nbg = 0, EMseeds=uu*100)
 
-    correct_samples3 <- max_match(sampled_results$cluster_membership,cluster_results3$clustermembership)
+    # correct_samples3 <- max_match(sampled_membership, cluster_results3$clustermembership)
+    correct_samples3 <- adjustedRandIndex(sampled_membership, cluster_results3$clustermembership)
 
-    correct_samples[uu,] <- c(correct_samples1, correct_samples2, correct_samples3)
+    ## k-means
+    res_kmeans1 <- kmeans(sampled_data, k_clust)
+    # correct_samples4 <- max_match(sampled_membership, res_kmeans1$cluster)
+    correct_samples4 <- adjustedRandIndex(sampled_membership, res_kmeans1$cluster)
+
+    res_kmeans2 <- kmeans(reduced_data, k_clust)
+    # correct_samples5 <- max_match(sampled_membership, res_kmeans2$cluster)
+    correct_samples5 <- adjustedRandIndex(sampled_membership, res_kmeans2$cluster)
+
+    ## Mclust
+    res_mclust1 <- Mclust(sampled_data, k_clust)
+    # correct_samples6 <- max_match(sampled_membership, res_mclust1$classification)
+    correct_samples6 <- adjustedRandIndex(sampled_membership, res_mclust1$classification)
+
+    res_mclust2 <- Mclust(reduced_data, k_clust)
+    # correct_samples7 <- max_match(sampled_membership, res_mclust2$classification)
+    correct_samples7 <- adjustedRandIndex(sampled_membership, res_mclust2$classification)
+
+    ## Bernoulli Mixture Model (BBMMclusterEM)
+    res_BBMM1 <- BBMMclusterEM(sampled_data, chi = 0.5, kclust = 5, startseed = uu*100, nIterations = 1, verbose=TRUE)
+    # correct_samples8 <- max_match(sampled_membership, res_BBMM1$newclustermembership)
+    correct_samples8 <- adjustedRandIndex(sampled_membership, res_BBMM1$newclustermembership)
+
+    res_BBMM2 <- BBMMclusterEM(reduced_data, chi = 0.5, kclust = 5, startseed = uu*100, nIterations = 10, verbose=TRUE)
+    # correct_samples9 <- max_match(sampled_membership, res_BBMM2$newclustermembership)
+    correct_samples9 <- adjustedRandIndex(sampled_membership, res_BBMM2$newclustermembership)
+
+
+    # summarize results
+    correct_samples[uu,] <- c(correct_samples1, correct_samples2, correct_samples3, correct_samples4, correct_samples5, correct_samples6, correct_samples7, correct_samples8, correct_samples9)
     # correct_fraction <- correct_samples/(dim(sampled_data)[1])
   }
 

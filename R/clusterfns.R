@@ -462,7 +462,7 @@ netClust <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, 
     assignprogress_local<-list()
     # assignprogress_local$corrvec<-numeric()
     assignprogress_local$likel<-numeric()
-    set.seed(EMseeds[s])
+    # set.seed(EMseeds[s])
     print(paste("EM seed",EMseeds[s]))
     # centers<-list()
     for (i in 1:kclust) {

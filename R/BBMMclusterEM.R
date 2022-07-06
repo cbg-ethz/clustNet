@@ -1,5 +1,6 @@
 BBMMclusterEM <- function(binaryMatrix, chi, kclust, startseed=100, nIterations=50, verbose=FALSE) {
 
+    # set.seed(startseed)
     # Check for input arguments
     if (missing(binaryMatrix) || !all(binaryMatrix < 2)) stop("Need a binary matrix as input to cluster.")
     if(missing(chi)) stop('Need to provide a value for chi.')
@@ -27,7 +28,7 @@ BBMMclusterEM <- function(binaryMatrix, chi, kclust, startseed=100, nIterations=
 doIterate <- function(idx, startseed, chi, kclust, datatocluster,verbose) {
 
     seednumber <- startseed + idx
-    set.seed(seednumber)
+    # set.seed(seednumber)
 
     if(verbose==TRUE){
       print(paste("Seed", seednumber, "with", kclust, "clusters and", chi, "pseudocounts"))
