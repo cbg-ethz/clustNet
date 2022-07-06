@@ -4,14 +4,14 @@
 \alias{sampleData}
 \title{sampleData}
 \usage{
-sampleData(kclust = 3, Nvars = 20, sseed = 1, samplesizes = c(300, 400, 500))
+sampleData(k_clust = 3, n_vars = 20, n_bg = 3, sseed = 1, n_samples = NULL)
 }
 \arguments{
+\item{sseed}{Seed}
+
 \item{kclust}{Number of clusters}
 
 \item{Nvars}{Number of variables}
-
-\item{sseed}{Seed}
 
 \item{samplesizes}{Sample sizes}
 }
