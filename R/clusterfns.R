@@ -380,7 +380,7 @@ netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMM
 }
 
 
-#' @title netClust
+#' @title get_clusters
 #'
 #' @description Network-based clustering
 #'
@@ -396,7 +396,7 @@ netClusterParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMM
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-netClust <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL){
+get_clusters <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL){
 
   # Binary clustering
   startseed <- EMseeds[1]
@@ -596,7 +596,7 @@ netClustParallel <- function(myData,kclust=3,nbg=0,itLim=20, EMseeds=1:5, BBMMCl
   nSeeds <- length(EMseeds)
   clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
     print(paste("Clustering iteration", i, "of", nSeeds))
-    clusterRes <- netClust(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat, bdepar=bdepar)
+    clusterRes <- get_clusters(myData=myData,kclust=kclust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat, bdepar=bdepar)
     return(clusterRes)
   }, mc.cores = nSeeds)
 
