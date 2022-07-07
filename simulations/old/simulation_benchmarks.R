@@ -2,12 +2,20 @@ library(combinat)
 library(netClust)
 library(mclust)
 
+library(cluster)
+gower_d <- daisy(mydata, metric = "gower")
+
+# benchmark
+
+results <- benchmark_methods(k_clust = 3, n_vars = 20, n_bg = 5, n_it = 3)
+
 # simulation of clustering
 
-k_clust <- 5
-n_bg <- 10
-n_vars <- 20
+k_clust <- 2
+n_bg <- 3
+n_vars <- 10
 sseed <- 1
+
 
 # sample data
 sampled_results <- netClust:::sampleData(k_clust = k_clust, n_vars = n_vars, n_bg = n_bg)
@@ -15,13 +23,18 @@ sampled_data <- sampled_results$sampled_data
 sampled_membership <- sampled_results$cluster_membership
 
 # clustering
-
-correct_samples <- netClust:::cluster_benchmark(sampled_data, sampled_membership, kclust = k_clust, nbg = n_bg, n_vars = n_vars, n_rep = 2)
+correct_samples <- netClust:::cluster_benchmark(sampled_data, sampled_membership, kclust = k_clust,
+                                                nbg = n_bg, n_vars = n_vars, n_rep = 2)
 
 # correct_fraction <- correct_samples/(dim(sampled_data)[1])
 
 saveRDS(correct_samples, "benchmark_res.rds")
 
+## cluster with covariate-adjusted framework
+cluster_results1 <- get_clusters(sampled_data, kclust = k_clust, nbg = n_bg, EMseeds=1)
+
+# correct_samples1 <- max_match(sampled_membership, cluster_results1$clustermembership)
+correct_samples1 <- adjustedRandIndex(sampled_membership, cluster_results1$clustermembership)
 
 
 # k-means

@@ -159,7 +159,7 @@ getBackgroundNodes <- function(n,nbg,probOfBG=0.3){
   return(tempBN)
 }
 
-generateBNs <- function(k_clust, n_vars, n_bg, bgedges="different", baseline=c(0.3,0.5), plotnets=TRUE){
+generateBNs <- function(k_clust, n_vars, n_bg, bgedges="different", equal_cpt_bg=TRUE, baseline=c(0.3,0.5), plotnets=TRUE){
   # simulate k_clust Bayesian networks with n_vars variables and n_bg background variables
 
   # set.seed(sseed)
@@ -211,10 +211,13 @@ generateBNs <- function(k_clust, n_vars, n_bg, bgedges="different", baseline=c(0
 
     }
 
-    # set the prob of background nodes equal
-    for (ss in 2:k_clust){
-      BNsBG[[ss]]$fp[(n_vars+1):(n_vars+n_bg)] <- BNsBG[[1]]$fp[(n_vars+1):(n_vars+n_bg)]
+    if (equal_cpt_bg==TRUE){
+      # set the CPTs of background nodes equal
+      for (ss in 2:k_clust){
+        BNsBG[[ss]]$fp[(n_vars+1):(n_vars+n_bg)] <- BNsBG[[1]]$fp[(n_vars+1):(n_vars+n_bg)]
+      }
     }
+
   }
 
   if (plotnets==TRUE){
@@ -333,20 +336,21 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=N
 #'
 #' @return sampled binary data
 #' @export
-sampleData <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_samples = NULL){
+sampleData <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_samples = NULL, bgedges = "different", equal_cpt_bg=TRUE){
   # sample binary data from different Bayes nets
 
   # set sample size
   n_samples <- c()
   if (length(n_samples)==0){
     for (ll in 1:k_clust){
-      n_samples <- c(n_samples, 100*ll+400)
+      n_samples <- c(n_samples, 100*ll+600)
     }
   }
 
   # sample Bayes nets
   sampled_data <- c()
-  bayesnets <- generateBNs(k_clust = k_clust, n_vars = n_vars, n_bg = n_bg, bgedges = "different", baseline = c(0.3,0.5), plotnets = FALSE)
+  bayesnets <- generateBNs(k_clust = k_clust, n_vars = n_vars, n_bg = n_bg, bgedges = "different",
+                           equal_cpt_bg=TRUE, baseline = c(0.3,0.5), plotnets = FALSE)
 
   # sample data from Bayes nets
   for (jj in 1:k_clust){
@@ -357,7 +361,8 @@ sampleData <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_samples = NULL){
   }
 
   cluster_membership <- rep(1:k_clust, n_samples)
-  return(list(sampled_data = sampled_data, cluster_membership = cluster_membership, bayes_nets=bayesnets))
+  return(list(sampled_data = sampled_data, cluster_membership = cluster_membership, bayes_nets=bayesnets,
+              n_samples=n_samples))
 }
 
 max_match <- function(membership1, membership2){
@@ -392,7 +397,7 @@ cluster_benchmark <- function(sampled_data, sampled_membership, kclust = 3, nbg 
   correct_samples <- matrix(NA, n_rep, 9)
   for (uu in 1:n_rep){
 
-    # set.seed(uu)
+    set.seed(uu)
 
     ## cluster with covariate-adjusted framework
     cluster_results1 <- get_clusters(sampled_data, kclust = k_clust, nbg = n_bg, EMseeds=uu*100)
@@ -442,12 +447,54 @@ cluster_benchmark <- function(sampled_data, sampled_membership, kclust = 3, nbg 
 
 
     # summarize results
-    correct_samples[uu,] <- c(correct_samples1, correct_samples2, correct_samples3, correct_samples4, correct_samples5, correct_samples6, correct_samples7, correct_samples8, correct_samples9)
+    correct_samples[uu,] <- c(correct_samples1, correct_samples2, correct_samples3, correct_samples4, correct_samples5,
+                              correct_samples6, correct_samples7, correct_samples8, correct_samples9)
     # correct_fraction <- correct_samples/(dim(sampled_data)[1])
   }
 
+  # label output
+  colnames(correct_samples) <- c("Cov-Adjust", "netClust (cov & var)", "netClust (var)",
+                                 "kmeans (cov & var)", "kmeans (var)", "Mclust (cov & var)",
+                                 "Mclust (var)", "BMM (cov & var)", "BMM (var)")
+
   return(correct_samples)
 
+}
+
+
+
+benchmark_methods <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_it = 10, n_samples = NULL, bgedges = "different",
+                              equal_cpt_bg = TRUE, start_seed = 1){
+
+  correct_samples <- matrix(NA, n_it, 9)
+  sampled_results_list <- list()
+  for (ww in 1:n_it){
+
+    set.seed(ww+start_seed-1)
+
+    # sample data
+    sampled_results <- netClust:::sampleData(k_clust=k_clust, n_vars=n_vars, n_bg=n_bg, n_samples=n_samples,
+                                             bgedges=bgedges, equal_cpt_bg=equal_cpt_bg)
+    sampled_data <- sampled_results$sampled_data
+    sampled_membership <- sampled_results$cluster_membership
+    n_samples <- sampled_results$n_samples
+
+    sampled_results_list[ww] <- sampled_results
+
+    # clustering
+    correct_samples[ww,] <- netClust:::cluster_benchmark(sampled_data, sampled_membership, kclust = k_clust,
+                                                         nbg = n_bg, n_vars = n_vars, n_rep = 1)
+  }
+
+  colnames(correct_samples) <- c("Cov-Adjust", "netClust (cov & var)", "netClust (var)",
+                                 "kmeans (cov & var)", "kmeans (var)", "Mclust (cov & var)",
+                                 "Mclust (var)", "BMM (cov & var)", "BMM (var)")
+
+
+  simulation_params <- c(k_clust, n_vars, n_bg, n_it, n_samples, bgedges, equal_cpt_bg, start_seed)
+
+  return(list("sampled_results"=sampled_results_list, "correct_samples"=correct_samples,
+              "simulation_params"=simulation_params))
 }
 
 
