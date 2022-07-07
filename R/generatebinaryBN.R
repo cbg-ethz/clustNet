@@ -109,52 +109,52 @@ generatefactors <- function (nf,baselinevec,mapping) {
 
 # functions added by F
 
-addBackgroundNodes <- function(n,nbg,startBN,probOfBG=0.3){
+addBackgroundNodes <- function(n,n_bg,startBN,probOfBG=0.3){
 
   # set.seed(sseed)
 
   # add background nodes
-  tempBN <- rbind(startBN$adj, array(sample(c(1,0), n*nbg, replace = T, prob = c(probOfBG,1-probOfBG)),c(nbg,n)))
-  tempBN <- cbind(tempBN, array(0,c(nbg+n,nbg)))
+  tempBN <- rbind(startBN$adj, array(sample(c(1,0), n*n_bg, replace = T, prob = c(probOfBG,1-probOfBG)),c(n_bg,n)))
+  tempBN <- cbind(tempBN, array(0,c(n_bg+n,n_bg)))
 
   # to make sure that background nodes don't interact themselves
-  tempBN[(n+1):(n+nbg),(n+1):(n+nbg)] <- 0
+  tempBN[(n+1):(n+n_bg),(n+1):(n+n_bg)] <- 0
 
   # label new nodes
-  rownames(tempBN)[n:(n+nbg)] <- as.character(n:(n+nbg))
-  colnames(tempBN)[n:(n+nbg)] <- as.character(n:(n+nbg))
+  rownames(tempBN)[n:(n+n_bg)] <- as.character(n:(n+n_bg))
+  colnames(tempBN)[n:(n+n_bg)] <- as.character(n:(n+n_bg))
 
   # make BN from adjacency matrix
-  endBN <- generatebinaryBN(n+nbg,baseline=c(0.3,0.5),startadj = tempBN)
+  endBN <- generatebinaryBN(n+n_bg,baseline=c(0.3,0.5),startadj = tempBN)
 
   return(endBN)
 }
 
-addFixedBackgroundNodes <- function(n,nbg,sseed,startBN, adjacenyMatrixBG,probOfBG=0.3){
+addFixedBackgroundNodes <- function(n,n_bg,sseed,startBN, adjacenyMatrixBG,probOfBG=0.3){
   # add background nodes to BN
   tempBN <- adjacenyMatrixBG
   tempBN[1:n,1:n] <- startBN$adj
 
   # make BN from adjacency matrix
-  endBN <- generatebinaryBN(n+nbg,baseline=c(0.3,0.5),startadj = tempBN)
+  endBN <- generatebinaryBN(n+n_bg,baseline=c(0.3,0.5),startadj = tempBN)
 
   return(endBN)
 }
 
-getBackgroundNodes <- function(n,nbg,probOfBG=0.3){
+getBackgroundNodes <- function(n,n_bg,probOfBG=0.3){
 
   # set.seed(sseed)
 
   # add background nodes
-  tempBN <- rbind(array(0,c(n,n)), array(sample(c(1,0), n*nbg, replace = T, prob = c(probOfBG,1-probOfBG)),c(nbg,n)))
-  tempBN <- cbind(tempBN, array(0,c(nbg+n,nbg)))
+  tempBN <- rbind(array(0,c(n,n)), array(sample(c(1,0), n*n_bg, replace = T, prob = c(probOfBG,1-probOfBG)),c(n_bg,n)))
+  tempBN <- cbind(tempBN, array(0,c(n_bg+n,n_bg)))
 
   # to make sure that background nodes don't interact themselves
-  tempBN[(n+1):(n+nbg),(n+1):(n+nbg)] <- 0
+  tempBN[(n+1):(n+n_bg),(n+1):(n+n_bg)] <- 0
 
   # label new nodes
-  rownames(tempBN)[1:(n+nbg)] <- as.character(1:(n+nbg))
-  colnames(tempBN)[1:(n+nbg)] <- as.character(1:(n+nbg))
+  rownames(tempBN)[1:(n+n_bg)] <- as.character(1:(n+n_bg))
+  colnames(tempBN)[1:(n+n_bg)] <- as.character(1:(n+n_bg))
 
   return(tempBN)
 }
@@ -232,10 +232,10 @@ generateBNs <- function(k_clust, n_vars, n_bg, bgedges="different", equal_cpt_bg
 }
 
 #' @importFrom stats rbinom
-generatebinaryBN.data.bggroups <- function (n, nbg, nbggroups, binaryBN,samplesize) {
+generatebinaryBN.data.bggroups <- function (n, n_bg, nbggroups, binaryBN,samplesize) {
 
   #simulate CPTs for the different groups of background nodes
-  tempP <- array(runif(nbggroups*nbg, 0.05,0.95), c(nbggroups,nbg))
+  tempP <- array(runif(nbggroups*n_bg, 0.05,0.95), c(nbggroups,n_bg))
 
   BNsample<-matrix(ncol=n,nrow=samplesize)
 
@@ -256,7 +256,7 @@ generatebinaryBN.data.bggroups <- function (n, nbg, nbggroups, binaryBN,samplesi
 }
 
 
-generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=NULL, lbgsamples=NULL){
+generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, n_bg=NULL, nbggroups=NULL, lbgsamples=NULL){
   #generate binary data from BNs and potentially different background groups
   sampleList <- c()
   ss <- sum(lsamples)
@@ -272,7 +272,7 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=N
     #sample background node group associations
     samplegroup <- sample(c(1:nbggroups),ss, replace = TRUE)
     #simulate CPTs for the different groups of background nodes
-    tempParray <- array(runif(nbggroups*nbg, 0.05,0.95), c(nbggroups,nbg))
+    tempParray <- array(runif(nbggroups*n_bg, 0.05,0.95), c(nbggroups,n_bg))
 
     Datafull <- NULL
     tcount <- 1
@@ -282,7 +282,7 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=N
         ntempsamples <- length(which(samplegroup[tcount:(tcount-1+lsamples[nn])]==gg))
         #set CPTs of background nodes for respective group
         tempP <- tempParray[gg,]
-        for (bb in 1:nbg){
+        for (bb in 1:n_bg){
           BNsBG[[nn]]$fp[[nvar+bb]] <- tempP[bb]
         }
         #simlate the data
@@ -296,7 +296,7 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=N
     #sample background node group associations
     # samplegroup <- sample(c(1:nbggroups),ss, replace = TRUE)
     #simulate CPTs for the different groups of background nodes
-    tempParray <- array(runif(nbggroups*nbg, 0.05,0.95), c(nbggroups,nbg))
+    tempParray <- array(runif(nbggroups*n_bg, 0.05,0.95), c(nbggroups,n_bg))
 
     ss2 <- sum(lbgsamples)
     Datafull <- NULL
@@ -312,7 +312,7 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=N
         ntempsamples <- length(which(samplegroup==nn))
         #set CPTs of background nodes for respective group
         tempP <- tempParray[gg,]
-        for (bb in 1:nbg){
+        for (bb in 1:n_bg){
           BNsBG[[nn]]$fp[[nvar+bb]] <- tempP[bb]
         }
         #simlate the data
@@ -392,7 +392,7 @@ max_match <- function(membership1, membership2){
 }
 
 
-cluster_benchmark <- function(sampled_data, sampled_membership, k_clust = 3, nbg = 3, n_vars = 20, n_rep = 10){
+cluster_benchmark <- function(sampled_data, sampled_membership, k_clust = 3, n_bg = 3, n_vars = 20, n_rep = 10){
 
   correct_samples <- matrix(NA, n_rep, 9)
   for (uu in 1:n_rep){
@@ -400,20 +400,20 @@ cluster_benchmark <- function(sampled_data, sampled_membership, k_clust = 3, nbg
     set.seed(uu)
 
     ## cluster with covariate-adjusted framework
-    cluster_results1 <- get_clusters(sampled_data, k_clust = k_clust, nbg = n_bg, EMseeds=uu*100)
+    cluster_results1 <- get_clusters(sampled_data, k_clust = k_clust, n_bg = n_bg, EMseeds=uu*100)
 
     # correct_samples1 <- max_match(sampled_membership, cluster_results1$clustermembership)
     correct_samples1 <- adjustedRandIndex(sampled_membership, cluster_results1$clustermembership)
 
     ## cluster all variables (variables and covariates)
-    cluster_results2 <- get_clusters(sampled_data, k_clust = k_clust, nbg = 0, EMseeds=uu*100)
+    cluster_results2 <- get_clusters(sampled_data, k_clust = k_clust, n_bg = 0, EMseeds=uu*100)
 
     # correct_samples2 <- max_match(sampled_membership, cluster_results2$clustermembership)
     correct_samples2 <- adjustedRandIndex(sampled_membership, cluster_results2$clustermembership)
 
     # cluster only variables without covariates
     reduced_data <- sampled_data[,1:n_vars]
-    cluster_results3 <- get_clusters(reduced_data, k_clust = k_clust, nbg = 0, EMseeds=uu*100)
+    cluster_results3 <- get_clusters(reduced_data, k_clust = k_clust, n_bg = 0, EMseeds=uu*100)
 
     # correct_samples3 <- max_match(sampled_membership, cluster_results3$clustermembership)
     correct_samples3 <- adjustedRandIndex(sampled_membership, cluster_results3$clustermembership)
@@ -483,7 +483,7 @@ benchmark_methods <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_it = 10, n_s
 
     # clustering
     correct_samples[ww,] <- netClust:::cluster_benchmark(sampled_data, sampled_membership, k_clust = k_clust,
-                                                         nbg = n_bg, n_vars = n_vars, n_rep = 1)
+                                                         n_bg = n_bg, n_vars = n_vars, n_rep = 1)
   }
 
   colnames(correct_samples) <- c("Cov-Adjust", "netClust (cov & var)", "netClust (var)",

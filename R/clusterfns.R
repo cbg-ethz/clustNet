@@ -130,7 +130,7 @@ reassignsamplesprop <- function(samplescores,numsamps,gamma){
 #'
 #' @param myData Data to be clustered
 #' @param k_clust Number of clusters
-#' @param nbg Number of covariates
+#' @param n_bg Number of covariates
 #' @param itLim Maximum number of iterations
 #' @param EMseeds Seeds
 #' @param BBMMClust Binary clustering before network-based clustering (TRUE by default)
@@ -139,7 +139,7 @@ reassignsamplesprop <- function(samplescores,numsamps,gamma){
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-netCluster <- function(myData,k_clust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
+netCluster <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
 
   # Binary clustering
   startseed <- EMseeds[1]
@@ -156,7 +156,7 @@ netCluster <- function(myData,k_clust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRU
   # # number of iterations (and respective seeds)
   # nSeeds <- 2
   # # number of covariate variables
-  # nbg <- 3
+  # n_bg <- 3
   ss <- dim(myData)[1]
   # #number of clusters
   # k_clust<-3
@@ -166,7 +166,7 @@ netCluster <- function(myData,k_clust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRU
   # total number of variables
   nn <- dim(myData)[2]
   #number of variables (without covariates)
-  n<-nn-nbg
+  n<-nn-n_bg
 
   # #prior pseudo counts
   # chixi<-0.5
@@ -210,7 +210,7 @@ netCluster <- function(myData,k_clust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRU
     # centers<-list()
     for (i in 1:k_clust) {
       # centers[[i]]<-as.data.frame(matrix(ncol=3))
-      clustercenters[[i]]<-matrix(rep(0,(n+nbg)^2),nrow=n+nbg)
+      clustercenters[[i]]<-matrix(rep(0,(n+n_bg)^2),nrow=n+n_bg)
     }
 
 
@@ -238,25 +238,25 @@ netCluster <- function(myData,k_clust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRU
       for (k in 1:k_clust) {
 
         # #learn background nodes
-        # for (i_nbg in 1:nbg){
+        # for (i_n_bg in 1:n_bg){
         #   for (i_n in 1:n){
         #     #chi squared test
-        #     testRes <- wtd.chi.sq(myData[,i_n],myData[,n+i_nbg],weight=allrelativeprobabs[,k])
+        #     testRes <- wtd.chi.sq(myData[,i_n],myData[,n+i_n_bg],weight=allrelativeprobabs[,k])
         #     siglevel <- 0.05/(k_clust+n)
         #     #add to initial DAG structure
         #     if (testRes[3]<siglevel){
-        #       clustercenters[[k]][n+i_nbg,i_n] <- 1
+        #       clustercenters[[k]][n+i_n_bg,i_n] <- 1
         #     }else{
-        #       clustercenters[[k]][n+i_nbg,i_n] <- 0
+        #       clustercenters[[k]][n+i_n_bg,i_n] <- 0
         #     }
         #   }
         # }
 
         #define score parameters
-        if (nbg>0){
+        if (n_bg>0){
           scorepar<-BiDAG::scoreparameters("bde",myData, edgepmat = edgepmat,
                                     weightvector=allrelativeprobabs[,k],
-                                    bdepar=bdepar, bgnodes=(n+1):(n+nbg))
+                                    bdepar=bdepar, bgnodes=(n+1):(n+n_bg))
         }else{
           scorepar<-BiDAG::scoreparameters("bde",myData, edgepmat = edgepmat,
                                     weightvector=allrelativeprobabs[,k],
@@ -276,10 +276,10 @@ netCluster <- function(myData,k_clust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRU
         coltots<-colSums(allrelativeprobabs) + bdepar$chi # add prior to clustersizes
         tauvec<-coltots/sum(coltots)
         for (k in 1:k_clust) {
-          if (nbg>0){
+          if (n_bg>0){
             scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
                                              weightvector=allrelativeprobabs[,k],
-                                             bdepar=bdepar, bgnodes=(n+1):(n+nbg))
+                                             bdepar=bdepar, bgnodes=(n+1):(n+n_bg))
           }else{
             scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
                                              weightvector=allrelativeprobabs[,k],
@@ -287,7 +287,7 @@ netCluster <- function(myData,k_clust=3,nbg=0,itLim=20, EMseeds=1, BBMMClust=TRU
           }
           scorepar$n <- n # to avoid to scoring over background nodes
           scoresagainstclusters[,k]<-BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]])
-          scorepar$n <- n+nbg # recet after scoring
+          scorepar$n <- n+n_bg # recet after scoring
         }
         newallrelativeprobabsnotau<-allrelativeprobs(scoresagainstclusters)
         newallrelativeprobabs<-relativeprobswithtau(newallrelativeprobabsnotau,tauvec)
@@ -350,7 +350,7 @@ getBestSeed <- function(assignprogress){
 #'
 #' @param myData Data to be clustered
 #' @param k_clust Number of clusters
-#' @param nbg Number of covariates
+#' @param n_bg Number of covariates
 #' @param itLim Maximum number of iterations
 #' @param EMseeds seeds
 #' @param BBMMClust binary clustering before network-based clustering (TRUE by default)
@@ -360,13 +360,13 @@ getBestSeed <- function(assignprogress){
 #' @return a list containing the clusterMemberships, DAGs, best seed and "assignprogress"
 #' @export
 #'
-netClusterParallel <- function(myData,k_clust=3,nbg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
+netClusterParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
 
   # parallel computing of clustering
   nSeeds <- length(EMseeds)
   clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
     print(paste("Clustering iteration", i, "of", nSeeds))
-    clusterRes <- netCluster(myData=myData,k_clust=k_clust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat, bdepar=bdepar)
+    clusterRes <- netCluster(myData=myData,k_clust=k_clust,n_bg=n_bg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat, bdepar=bdepar)
     return(clusterRes)
   }, mc.cores = nSeeds)
 
@@ -386,7 +386,7 @@ netClusterParallel <- function(myData,k_clust=3,nbg=0,itLim=20, EMseeds=1:5, BBM
 #'
 #' @param myData Data to be clustered
 #' @param k_clust Number of clusters
-#' @param nbg Number of covariates
+#' @param n_bg Number of covariates
 #' @param itLim Maximum number of iterations
 #' @param EMseeds Seeds
 #' @param BBMMClust Binary clustering before network-based clustering (TRUE by default)
@@ -396,7 +396,7 @@ netClusterParallel <- function(myData,k_clust=3,nbg=0,itLim=20, EMseeds=1:5, BBM
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-get_clusters <- function(myData,k_clust=3,nbg=0,itLim=50, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL){
+get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL){
 
   # Binary clustering
   startseed <- EMseeds[1]
@@ -413,7 +413,7 @@ get_clusters <- function(myData,k_clust=3,nbg=0,itLim=50, EMseeds=1, BBMMClust=T
   # # number of iterations (and respective seeds)
   # nSeeds <- 2
   # # number of covariate variables
-  # nbg <- 3
+  # n_bg <- 3
   ss <- dim(myData)[1]
   # #number of clusters
   # k_clust<-3
@@ -423,7 +423,7 @@ get_clusters <- function(myData,k_clust=3,nbg=0,itLim=50, EMseeds=1, BBMMClust=T
   # total number of variables
   nn <- dim(myData)[2]
   #number of variables (without covariates)
-  n<-nn-nbg
+  n<-nn-n_bg
 
   # #prior pseudo counts
   # chixi<-0.5
@@ -467,7 +467,7 @@ get_clusters <- function(myData,k_clust=3,nbg=0,itLim=50, EMseeds=1, BBMMClust=T
     # centers<-list()
     for (i in 1:k_clust) {
       # centers[[i]]<-as.data.frame(matrix(ncol=3))
-      clustercenters[[i]]<-matrix(rep(0,(n+nbg)^2),nrow=n+nbg)
+      clustercenters[[i]]<-matrix(rep(0,(n+n_bg)^2),nrow=n+n_bg)
     }
 
 
@@ -496,10 +496,10 @@ get_clusters <- function(myData,k_clust=3,nbg=0,itLim=50, EMseeds=1, BBMMClust=T
       clustercenters <- parallel::mclapply(1:k_clust, function(k) {
 
         #define score parameters
-        if (nbg>0){
+        if (n_bg>0){
           scorepar<-BiDAG::scoreparameters("bde",myData, edgepmat = edgepmat,
                                            weightvector=allrelativeprobabs[,k],
-                                           bdepar=bdepar, bgnodes=(n+1):(n+nbg))
+                                           bdepar=bdepar, bgnodes=(n+1):(n+n_bg))
         }else{
           scorepar<-BiDAG::scoreparameters("bde",myData, edgepmat = edgepmat,
                                            weightvector=allrelativeprobabs[,k],
@@ -522,10 +522,10 @@ get_clusters <- function(myData,k_clust=3,nbg=0,itLim=50, EMseeds=1, BBMMClust=T
         tauvec<-coltots/sum(coltots)
 
         parRes <- parallel::mclapply(1:k_clust, function(k) {
-          if (nbg>0){
+          if (n_bg>0){
             scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
                                              weightvector=allrelativeprobabs[,k],
-                                             bdepar=bdepar, bgnodes=(n+1):(n+nbg))
+                                             bdepar=bdepar, bgnodes=(n+1):(n+n_bg))
           }else{
             scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
                                              weightvector=allrelativeprobabs[,k],
@@ -533,7 +533,7 @@ get_clusters <- function(myData,k_clust=3,nbg=0,itLim=50, EMseeds=1, BBMMClust=T
           }
           scorepar$n <- n # to avoid to scoring over background nodes
           scoresagainstclusters[,k]<-BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]])
-          scorepar$n <- n+nbg # recet after scoring
+          scorepar$n <- n+n_bg # recet after scoring
 
           return(scoresagainstclusters[,k])
 
@@ -580,7 +580,7 @@ get_clusters <- function(myData,k_clust=3,nbg=0,itLim=50, EMseeds=1, BBMMClust=T
 #'
 #' @param myData Data to be clustered
 #' @param k_clust Number of clusters
-#' @param nbg Number of covariates
+#' @param n_bg Number of covariates
 #' @param itLim Maximum number of iterations
 #' @param EMseeds seeds
 #' @param BBMMClust binary clustering before network-based clustering (TRUE by default)
@@ -590,13 +590,13 @@ get_clusters <- function(myData,k_clust=3,nbg=0,itLim=50, EMseeds=1, BBMMClust=T
 #' @return a list containing the clusterMemberships, DAGs, best seed and "assignprogress"
 #' @export
 #'
-netClustParallel <- function(myData,k_clust=3,nbg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
+netClustParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
 
   # parallel computing of clustering
   nSeeds <- length(EMseeds)
   clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
     print(paste("Clustering iteration", i, "of", nSeeds))
-    clusterRes <- get_clusters(myData=myData,k_clust=k_clust,nbg=nbg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat, bdepar=bdepar)
+    clusterRes <- get_clusters(myData=myData,k_clust=k_clust,n_bg=n_bg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat, bdepar=bdepar)
     return(clusterRes)
   }, mc.cores = nSeeds)
 
