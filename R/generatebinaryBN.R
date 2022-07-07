@@ -329,7 +329,7 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, nbg=NULL, nbggroups=N
 #'
 #' @description Sample binary data from different Bayes nets
 #'
-#' @param kclust Number of clusters
+#' @param k_clust Number of clusters
 #' @param Nvars Number of variables
 #' @param sseed Seed
 #' @param samplesizes Sample sizes
@@ -392,7 +392,7 @@ max_match <- function(membership1, membership2){
 }
 
 
-cluster_benchmark <- function(sampled_data, sampled_membership, kclust = 3, nbg = 3, n_vars = 20, n_rep = 10){
+cluster_benchmark <- function(sampled_data, sampled_membership, k_clust = 3, nbg = 3, n_vars = 20, n_rep = 10){
 
   correct_samples <- matrix(NA, n_rep, 9)
   for (uu in 1:n_rep){
@@ -400,20 +400,20 @@ cluster_benchmark <- function(sampled_data, sampled_membership, kclust = 3, nbg 
     set.seed(uu)
 
     ## cluster with covariate-adjusted framework
-    cluster_results1 <- get_clusters(sampled_data, kclust = k_clust, nbg = n_bg, EMseeds=uu*100)
+    cluster_results1 <- get_clusters(sampled_data, k_clust = k_clust, nbg = n_bg, EMseeds=uu*100)
 
     # correct_samples1 <- max_match(sampled_membership, cluster_results1$clustermembership)
     correct_samples1 <- adjustedRandIndex(sampled_membership, cluster_results1$clustermembership)
 
     ## cluster all variables (variables and covariates)
-    cluster_results2 <- get_clusters(sampled_data, kclust = k_clust, nbg = 0, EMseeds=uu*100)
+    cluster_results2 <- get_clusters(sampled_data, k_clust = k_clust, nbg = 0, EMseeds=uu*100)
 
     # correct_samples2 <- max_match(sampled_membership, cluster_results2$clustermembership)
     correct_samples2 <- adjustedRandIndex(sampled_membership, cluster_results2$clustermembership)
 
     # cluster only variables without covariates
     reduced_data <- sampled_data[,1:n_vars]
-    cluster_results3 <- get_clusters(reduced_data, kclust = k_clust, nbg = 0, EMseeds=uu*100)
+    cluster_results3 <- get_clusters(reduced_data, k_clust = k_clust, nbg = 0, EMseeds=uu*100)
 
     # correct_samples3 <- max_match(sampled_membership, cluster_results3$clustermembership)
     correct_samples3 <- adjustedRandIndex(sampled_membership, cluster_results3$clustermembership)
@@ -437,11 +437,11 @@ cluster_benchmark <- function(sampled_data, sampled_membership, kclust = 3, nbg 
     correct_samples7 <- adjustedRandIndex(sampled_membership, res_mclust2$classification)
 
     ## Bernoulli Mixture Model (BBMMclusterEM)
-    res_BBMM1 <- BBMMclusterEM(sampled_data, chi = 0.5, kclust = 5, startseed = uu*100, nIterations = 1, verbose=TRUE)
+    res_BBMM1 <- BBMMclusterEM(sampled_data, chi = 0.5, k_clust = 5, startseed = uu*100, nIterations = 1, verbose=TRUE)
     # correct_samples8 <- max_match(sampled_membership, res_BBMM1$newclustermembership)
     correct_samples8 <- adjustedRandIndex(sampled_membership, res_BBMM1$newclustermembership)
 
-    res_BBMM2 <- BBMMclusterEM(reduced_data, chi = 0.5, kclust = 5, startseed = uu*100, nIterations = 10, verbose=TRUE)
+    res_BBMM2 <- BBMMclusterEM(reduced_data, chi = 0.5, k_clust = 5, startseed = uu*100, nIterations = 10, verbose=TRUE)
     # correct_samples9 <- max_match(sampled_membership, res_BBMM2$newclustermembership)
     correct_samples9 <- adjustedRandIndex(sampled_membership, res_BBMM2$newclustermembership)
 
@@ -482,7 +482,7 @@ benchmark_methods <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_it = 10, n_s
     sampled_results_list[ww] <- sampled_results
 
     # clustering
-    correct_samples[ww,] <- netClust:::cluster_benchmark(sampled_data, sampled_membership, kclust = k_clust,
+    correct_samples[ww,] <- netClust:::cluster_benchmark(sampled_data, sampled_membership, k_clust = k_clust,
                                                          nbg = n_bg, n_vars = n_vars, n_rep = 1)
   }
 

@@ -1,4 +1,4 @@
-BBMMclusterEM <- function(binaryMatrix, chi, kclust, startseed=100, nIterations=50, verbose=FALSE) {
+BBMMclusterEM <- function(binaryMatrix, chi, k_clust, startseed=100, nIterations=50, verbose=FALSE) {
 
     # set.seed(startseed)
     # Check for input arguments
@@ -8,7 +8,7 @@ BBMMclusterEM <- function(binaryMatrix, chi, kclust, startseed=100, nIterations=
         #print('Zero chi, setting chi to 1e-3')
         chi<-1e-3
     }
-    if (missing(kclust)) stop('Need to provide a value for kclust.')
+    if (missing(k_clust)) stop('Need to provide a value for k_clust.')
     if (as.integer(nIterations) < 1) {
         stop('Need to specify a positive integer.')
     } else {
@@ -16,7 +16,7 @@ BBMMclusterEM <- function(binaryMatrix, chi, kclust, startseed=100, nIterations=
     }
     if (startseed < 0) stop("Need to specify a positive integer as startseed.")
 
-    tmp <- lapply(seq(nIterations), doIterate, startseed, chi, kclust, binaryMatrix,verbose)
+    tmp <- lapply(seq(nIterations), doIterate, startseed, chi, k_clust, binaryMatrix,verbose)
 
     idx <- which.min(sapply(tmp, '[', 'testAIC'))
 
@@ -25,16 +25,16 @@ BBMMclusterEM <- function(binaryMatrix, chi, kclust, startseed=100, nIterations=
     return(output)
 }
 
-doIterate <- function(idx, startseed, chi, kclust, datatocluster,verbose) {
+doIterate <- function(idx, startseed, chi, k_clust, datatocluster,verbose) {
 
     seednumber <- startseed + idx
     # set.seed(seednumber)
 
     if(verbose==TRUE){
-      print(paste("Seed", seednumber, "with", kclust, "clusters and", chi, "pseudocounts"))
+      print(paste("Seed", seednumber, "with", k_clust, "clusters and", chi, "pseudocounts"))
     }
 
-    clusterresults <- BBMMclusterEMcore(kclust,chi,datatocluster)
+    clusterresults <- BBMMclusterEMcore(k_clust,chi,datatocluster)
 
     # finally assign to the maximal cluster
     newclustermembership <- reassignsamples(clusterresults$relativeweights)
@@ -56,7 +56,7 @@ doIterate <- function(idx, startseed, chi, kclust, datatocluster,verbose) {
 
     # now we recompute with (almost) no pseudocounts to get a ML limit
 
-    againstclusterresults <- scoreagainstemptyEMcluster(kclust,1e-3,clusterresults$relativeweights,clusterresults$tauvec,datatocluster,datatocluster)
+    againstclusterresults <- scoreagainstemptyEMcluster(k_clust,1e-3,clusterresults$relativeweights,clusterresults$tauvec,datatocluster,datatocluster)
 
     testloglike <- calcloglike(againstclusterresults$scoresagainstclusters,clusterresults$tauvec)
     #print(testloglike)
@@ -113,11 +113,11 @@ calcloglike <- function(samplescores,tau){
     return(loglike)
 }
 
-BBMMclusterEMcore <- function(kclust, chi, datatocluster){
+BBMMclusterEMcore <- function(k_clust, chi, datatocluster){
 
     nbig<-ncol(datatocluster)
     mbig<-nrow(datatocluster)
-    scoresagainstclusters<-matrix(0,mbig,kclust)
+    scoresagainstclusters<-matrix(0,mbig,k_clust)
 
     diffystart<-10
     diffy<-diffystart # to check for convergence
@@ -125,9 +125,9 @@ BBMMclusterEMcore <- function(kclust, chi, datatocluster){
     countlimit<-1e4 # hard limit on the number of loops
     errortol<-1e-10# when to stop the assignment
 
-    clustermembership<-sample.int(kclust,mbig,replace=TRUE) # start with random groupings
+    clustermembership<-sample.int(k_clust,mbig,replace=TRUE) # start with random groupings
 
-    for(k in 1:kclust){
+    for(k in 1:k_clust){
         clustersamps<-which(clustermembership==k) # find the members of the cluster
         scoresagainstclusters[clustersamps,k]<-1e-3 # increase the probabilty of clustermembership
         # to get non-uniform starting point
@@ -149,7 +149,7 @@ BBMMclusterEMcore <- function(kclust, chi, datatocluster){
 
         # and the posterior means
 
-        for(kk in 1:kclust){
+        for(kk in 1:k_clust){
             weightvec<-relativeweights[,kk]
             Datawone<- datatocluster*weightvec # the weighted 1s
             #Datawzero<- (t(1-Datafull)*weightvec) # the weighted 0s
@@ -185,14 +185,14 @@ BBMMclusterEMcore <- function(kclust, chi, datatocluster){
 
 }
 
-scoreagainstemptyEMcluster <- function(kclust, chi, relativeweights, tauvec, datatocluster, datatoscore){
+scoreagainstemptyEMcluster <- function(k_clust, chi, relativeweights, tauvec, datatocluster, datatoscore){
 
     nbig<-ncol(datatoscore)
     mbig<-nrow(datatoscore)
 
-    scoresagainstclusters<-matrix(0,mbig,kclust)
+    scoresagainstclusters<-matrix(0,mbig,k_clust)
 
-    for(kk in 1:kclust){
+    for(kk in 1:k_clust){
         weightvec<-relativeweights[,kk]
         Datawone<- datatocluster*weightvec # the weighted 1s
         #Datawzero<- (t(1-Datafull)*weightvec) # the weighted 0s
