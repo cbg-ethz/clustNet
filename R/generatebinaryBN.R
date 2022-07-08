@@ -493,8 +493,14 @@ benchmark_methods <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_it = 10, n_s
 
   simulation_params <- c(k_clust, n_vars, n_bg, n_it, n_samples, bgedges, equal_cpt_bg, start_seed)
 
-  return(list("sampled_results"=sampled_results_list, "correct_samples"=correct_samples,
-              "simulation_params"=simulation_params))
+  results <- list("sampled_results"=sampled_results_list, "correct_samples"=correct_samples,
+       "simulation_params"=simulation_params)
+
+  # save
+  saveRDS(results, paste0("results--k_clust-", k_clust, "--n_vars-", n_vars, "--n_bg-", n_bg, "--n_it-",
+                          n_it, "--", bgedges, "--", equal_cpt_bg, ".rds"))
+
+  return(results)
 }
 
 
