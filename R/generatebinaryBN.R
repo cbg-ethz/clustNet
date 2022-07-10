@@ -479,7 +479,7 @@ benchmark_methods <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_it = 10, n_s
     sampled_membership <- sampled_results$cluster_membership
     n_samples <- sampled_results$n_samples
 
-    sampled_results_list <- list(sampled_results_list, sampled_results)
+    sampled_results_list <- append(sampled_results_list, sampled_results)
 
     # clustering
     correct_samples[ww,] <- netClust:::cluster_benchmark(sampled_data, sampled_membership, k_clust = k_clust,
