@@ -396,14 +396,14 @@ netClusterParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, BB
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL){
+get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL){
 
   # Binary clustering
   startseed <- EMseeds[1]
   nIterations <- 10
   chi <- 0.5 # pseudocounts for the Beta prior
 
-  if(BBMMClust){
+  if(is.null(newallrelativeprobabs)){
     binClust <- BBMMclusterEM(binaryMatrix = myData, chi = chi, k_clust = k_clust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
     newallrelativeprobabs <- binClust$relativeweights
     newclustermembership <- binClust$newclustermembership
