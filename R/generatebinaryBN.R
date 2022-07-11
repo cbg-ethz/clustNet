@@ -170,7 +170,7 @@ generateBNs <- function(k_clust, n_vars, n_bg, bgedges="different", equal_cpt_bg
     BNs[[gg]]<-generatebinaryBN(n_vars,baseline=baseline)
   }
 
-  if(n_bg=0){
+  if(n_bg==0){
     BNsBG<-list()
     for (gg in 1:k_clust){
       BNsBG[[gg]]<-BNs[[gg]]
