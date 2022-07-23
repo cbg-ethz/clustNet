@@ -389,7 +389,6 @@ netClusterParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, BB
 #' @param n_bg Number of covariates
 #' @param itLim Maximum number of iterations
 #' @param EMseeds Seeds
-#' @param BBMMClust Binary clustering before network-based clustering (TRUE by default)
 #' @param edgepmat Matrix of penalized edges in the search space
 #' @param bdepar Hyperparameters for structure learning (BDE score)
 #' @param newallrelativeprobabs relative probability of cluster assignment of each sample
