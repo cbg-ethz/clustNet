@@ -6,8 +6,8 @@
 \usage{
 netClustParallel(
   myData,
-  kclust = 3,
-  nbg = 0,
+  k_clust = 3,
+  n_bg = 0,
   itLim = 20,
   EMseeds = 1:5,
   BBMMClust = TRUE,
@@ -18,9 +18,9 @@ netClustParallel(
 \arguments{
 \item{myData}{Data to be clustered}
 
-\item{kclust}{Number of clusters}
+\item{k_clust}{Number of clusters}
 
-\item{nbg}{Number of covariates}
+\item{n_bg}{Number of covariates}
 
 \item{itLim}{Maximum number of iterations}
 

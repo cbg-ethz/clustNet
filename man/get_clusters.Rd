@@ -6,11 +6,10 @@
 \usage{
 get_clusters(
   myData,
-  kclust = 3,
-  nbg = 0,
-  itLim = 20,
+  k_clust = 3,
+  n_bg = 0,
+  itLim = 50,
   EMseeds = 1,
-  BBMMClust = TRUE,
   edgepmat = NULL,
   bdepar = list(chi = 0.5, edgepf = 16),
   newallrelativeprobabs = NULL
@@ -19,15 +18,13 @@ get_clusters(
 \arguments{
 \item{myData}{Data to be clustered}
 
-\item{kclust}{Number of clusters}
+\item{k_clust}{Number of clusters}
 
-\item{nbg}{Number of covariates}
+\item{n_bg}{Number of covariates}
 
 \item{itLim}{Maximum number of iterations}
 
 \item{EMseeds}{Seeds}
-
-\item{BBMMClust}{Binary clustering before network-based clustering (TRUE by default)}
 
 \item{edgepmat}{Matrix of penalized edges in the search space}
 

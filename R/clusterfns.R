@@ -608,4 +608,22 @@ netClustParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, BBMM
   return(list("clustermembership"=bestRes$clustermembership,"assignprogress"=bestRes$assignprogress,"DAGs"=bestRes$DAGs,"bestSeed"=bestSeed))
 }
 
+#' @title plot_clusters
+#'
+#' @description Plot DAGs of each cluster
+#'
+#' @param learned_clusters Output from get_clusters()
+#'
+#' @return A plot of DAGs
+#' @export
+#'
+plot_clusters <- function(learned_clusters){
+  # plot DAGs of each cluster
+  n_dags <- length(learned_clusters$DAGs)
+  par(mfrow = c(2, 1+as.integer(n_dags/2)))
+  for (ii in 1:n_dags){
+    SubGroupSeparation:::plot_dag(as.matrix(learned_clusters$DAGs[ii][[1]]))
+  }
+  par(mfrow = c(1,1))
+}
 
