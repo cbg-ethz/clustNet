@@ -4,7 +4,7 @@ Title: Network-Based Clustering
 Version: 1.0.1
 Author: Fritz Bayer, Jack Kuipers
 Maintainer: Fritz Bayer <frbayer@ethz.ch>
-Description: Network-based clustering of binary data using a Bayesian network mixture model and optional covariate adjustment.
+Description: Network-based clustering using a Bayesian network mixture model with optional covariate adjustment.
 License: GPL-3
 Depends:
     R (>= 3.5.0)
