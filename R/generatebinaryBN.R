@@ -437,11 +437,11 @@ cluster_benchmark <- function(sampled_data, sampled_membership, k_clust = 3, n_b
     ## Mclust
     res_mclust1 <- kmeans(sampled_data, k_clust)
     # correct_samples6 <- max_match(sampled_membership, res_mclust1$classification)
-    correct_samples6 <- adjustedRandIndex(sampled_membership, res_mclust1$classification)
+    correct_samples6 <- adjustedRandIndex(sampled_membership, res_mclust1$cluster)
 
     res_mclust2 <- kmeans(reduced_data, k_clust)
     # correct_samples7 <- max_match(sampled_membership, res_mclust2$classification)
-    correct_samples7 <- adjustedRandIndex(sampled_membership, res_mclust2$classification)
+    correct_samples7 <- adjustedRandIndex(sampled_membership, res_mclust2$cluster)
 
     ## Bernoulli Mixture Model (BBMMclusterEM)
     res_BBMM1 <- BBMMclusterEM(sampled_data, chi = 0.5, k_clust = 5, startseed = uu*100, nIterations = 1, verbose=TRUE)
