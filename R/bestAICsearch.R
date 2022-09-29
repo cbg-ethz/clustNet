@@ -46,7 +46,7 @@ bestAICsearch <- function(binaryMatrix, minK = 2, maxK=5, chiVec=c(1e-3,0.5,1,2,
         }
         for(kk in minK:maxK){
             bestCluster <- BBMMclusterEM(binaryMatrix = binaryMatrix,
-                                                        chi = chi, kclust = kk,
+                                                        chi = chi, k_clust = kk,
                                                         startseed = startseed,
                                                         nIterations = nIterations)
 
