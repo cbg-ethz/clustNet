@@ -582,20 +582,19 @@ get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=N
 #' @param n_bg Number of covariates
 #' @param itLim Maximum number of iterations
 #' @param EMseeds seeds
-#' @param BBMMClust binary clustering before network-based clustering (TRUE by default)
 #' @param edgepmat a matrix of penalized edges in the search space
 #' @param bdepar Hyperparameters for structure learning (BDE score)
 #'
 #' @return a list containing the clusterMemberships, DAGs, best seed and "assignprogress"
 #' @export
 #'
-netClustParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
+netClustParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
 
   # parallel computing of clustering
   nSeeds <- length(EMseeds)
   clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
     print(paste("Clustering iteration", i, "of", nSeeds))
-    clusterRes <- get_clusters(myData=myData,k_clust=k_clust,n_bg=n_bg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat, bdepar=bdepar)
+    clusterRes <- get_clusters(myData=myData,k_clust=k_clust,n_bg=n_bg,itLim=itLim, EMseeds=EMseeds[i], edgepmat=edgepmat, bdepar=bdepar)
     return(clusterRes)
   }, mc.cores = nSeeds)
 

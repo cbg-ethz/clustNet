@@ -10,7 +10,6 @@ netClustParallel(
   n_bg = 0,
   itLim = 20,
   EMseeds = 1:5,
-  BBMMClust = TRUE,
   edgepmat = NULL,
   bdepar = list(chi = 0.5, edgepf = 16)
 )
@@ -25,8 +24,6 @@ netClustParallel(
 \item{itLim}{Maximum number of iterations}
 
 \item{EMseeds}{seeds}
-
-\item{BBMMClust}{binary clustering before network-based clustering (TRUE by default)}
 
 \item{edgepmat}{a matrix of penalized edges in the search space}
 
