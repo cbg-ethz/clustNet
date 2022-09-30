@@ -573,7 +573,7 @@ get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=N
   }
 
   # measure time
-  end_time <- start_time()
+  end_time <- Sys.time()
 
   print(start_time-end_time)
 
