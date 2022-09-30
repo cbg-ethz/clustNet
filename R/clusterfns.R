@@ -397,6 +397,9 @@ netClusterParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, BB
 #' @export
 get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL){
 
+  # measure time
+  start_time <- Sys.time()
+
   # Binary clustering
   startseed <- EMseeds[1]
   nIterations <- 10
@@ -568,6 +571,11 @@ get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=N
     probs[[s]]<-newallrelativeprobabs
     # relabs[[s]]<-res$relabel
   }
+
+  # measure time
+  end_time <- start_time()
+
+  print(start_time-end_time)
 
   return(list("clustermembership"=newclustermembership,"assignprogress"=assignprogress, "DAGs"=clustercenters, "newallrelativeprobabs"=newallrelativeprobabs))
 }
