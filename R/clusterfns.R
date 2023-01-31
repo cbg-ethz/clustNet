@@ -525,16 +525,16 @@ get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=N
 
         parRes <- parallel::mclapply(1:k_clust, function(k) {
           if (n_bg>0){
-            scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
+            scorepar <- BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
                                              weightvector=allrelativeprobabs[,k],
                                              bdepar=bdepar, bgnodes=(n+1):(n+n_bg))
           }else{
-            scorepar<-BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
+            scorepar <- BiDAG::scoreparameters("bde",as.data.frame(myData), edgepmat = edgepmat,
                                              weightvector=allrelativeprobabs[,k],
                                              bdepar=bdepar)
           }
           scorepar$n <- n # to avoid to scoring over background nodes
-          scoresagainstclusters[,k]<-BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]])
+          scoresagainstclusters[,k] <- BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]])
           scorepar$n <- n+n_bg # recet after scoring
 
           return(scoresagainstclusters[,k])
@@ -578,7 +578,7 @@ get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=N
   print(paste0("Computation time: ",as.numeric(end_time-start_time)))
 
   names(newclustermembership) <- rownames(myData)
-  
+
   return(list("clustermembership"=newclustermembership,"assignprogress"=assignprogress, "DAGs"=clustercenters, "newallrelativeprobabs"=newallrelativeprobabs))
 }
 

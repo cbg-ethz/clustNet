@@ -28,10 +28,16 @@ Simulate binary data and learn clusters subsequently.
 # Simulate binary data
 kclusters <- 3
 ss <- c(400, 500, 600) # samples in each cluster
-my_data <- netClust::sampleData(kclust = kclusters, Nvars = 20, sseed = 2, samplesizes = ss)
+simulation_data <- netClust::sampleData(k_clust = kclusters, n_vars = 20, n_samples = ss)
+
+sampled_data <- simulation_data$sampled_data
 
 # Network-based clustering
-cluster_res_t <- get_clusters(my_data, kclust = kclusters)
+cluster_res_t <- get_clusters(sampled_data, k_clust = kclusters)
+
+
+
+# alternatives:
 # cluster_res <- netCluster(my_data, kclust = 3)
 # cluster_res_test <- netClustParallel(my_data, kclust = 3)
 # cluster_res_p <- netClusterParallel(my_data, kclust = 3)
