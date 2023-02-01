@@ -12,7 +12,9 @@ get_clusters(
   EMseeds = 1,
   edgepmat = NULL,
   bdepar = list(chi = 0.5, edgepf = 16),
-  newallrelativeprobabs = NULL
+  newallrelativeprobabs = NULL,
+  categorical = FALSE,
+  bdecatCvec = NULL
 )
 }
 \arguments{

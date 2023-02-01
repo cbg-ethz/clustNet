@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+library(devtools)
+load_all()
 library(netClust)
 ```
 
@@ -35,6 +37,21 @@ sampled_data <- simulation_data$sampled_data
 # Network-based clustering
 cluster_res_t <- get_clusters(sampled_data, k_clust = kclusters)
 
+cluster_res_t <- get_clusters(sampled_data, k_clust = kclusters, 
+                              newallrelativeprobabs = cluster_res_t$newallrelativeprobabs, categorical=FALSE)
+
+cluster_res_t <- get_clusters(sampled_data, k_clust = kclusters, 
+                              newallrelativeprobabs = cluster_res_t$newallrelativeprobabs, categorical=TRUE, bdecatCvec=rep(2,23))
+
+
+# categorical_sampled_data <- matrix(as.character(sampled_data),    # Convert to numeric matrix
+#                   ncol = ncol(sampled_data))
+# 
+# cluster_res_t <- get_clusters(categorical_sampled_data, k_clust = kclusters, 
+#                               newallrelativeprobabs = cluster_res_t$newallrelativeprobabs, categorical=TRUE)
+
+library(mclust)
+adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
 
 
 # alternatives:

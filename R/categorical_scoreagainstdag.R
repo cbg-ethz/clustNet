@@ -33,7 +33,7 @@ scoreagainstDAG <- function(scorepar, incidence, datatoscore=NULL, marginalise=F
   }
 
   if (scorepar$type=="bge" && marginalise!=FALSE){
-    return(scoreagainstDAGmargBGe(n, scorepar, incidence, datatoscore))
+    return(BiDAG:::scoreagainstDAGmargBGe(n, scorepar, incidence, datatoscore))
   } else if (scorepar$type=="mixed") {
     binscore<-scoreagainstDAG(scorepar$binpar, incidence[1:scorepar$nbin,1:scorepar$nbin])
     gausscore<-scoreagainstDAG(scorepar$gausspar, incidence)
@@ -49,6 +49,11 @@ scoreagainstDAG <- function(scorepar, incidence, datatoscore=NULL, marginalise=F
     return(rowSums(samplescores))
   } else {
     if (!is.null(bdecatCvec)) {
+      # bdecatCvec <- rep(NA,n)
+      # for (i in 1:n){
+      #   bdecatCvec[i]
+      #   as.factor(Asiascore$data[,i])
+      # }
       scorepar$Cvec <- bdecatCvec
     }
     samplescores <- matrix(0,nrow=nrow(datatoscore),ncol=n)
@@ -121,11 +126,11 @@ scoreagainstDAGcore<-function(j,parentnodes,n,param,datatoscore) {
                     summys<-colSums(2^(c(0:(lp-1)))*t(param$data[,parentnodes]))
                     tokeep<-which(!is.na(summys+param$d1[,j])) # remove NAs either in the parents or the child
                     if(length(tokeep)<length(summys)){
-                      N1s<-collectC(summys[tokeep],param$d1[tokeep,j],noparams)
-                      N0s<-collectC(summys[tokeep],param$d0[tokeep,j],noparams)
+                      N1s<-BiDAG:::collectC(summys[tokeep],param$d1[tokeep,j],noparams)
+                      N0s<-BiDAG:::collectC(summys[tokeep],param$d0[tokeep,j],noparams)
                     } else {
-                      N1s<-collectC(summys,param$d1[,j],noparams)
-                      N0s<-collectC(summys,param$d0[,j],noparams)
+                      N1s<-BiDAG:::collectC(summys,param$d1[,j],noparams)
+                      N0s<-BiDAG:::collectC(summys,param$d0[,j],noparams)
                     }
                     NTs<-N0s+N1s
                     thetas<-(N1s+param$chi/(2*noparams))/(NTs+param$chi/noparams) # the probability of each state

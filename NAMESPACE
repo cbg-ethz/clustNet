@@ -2,9 +2,6 @@
 
 export(bestAICsearch)
 export(get_clusters)
-export(netClustParallel)
-export(netCluster)
-export(netClusterParallel)
 export(sampleData)
 export(scoreagainstDAG)
 export(scoreparameters)
