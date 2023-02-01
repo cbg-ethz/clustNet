@@ -43,7 +43,7 @@
 #' myScore<-scoreparameters("bge", myData)
 #'@export
 # a constructor function for the "scoreparameters" class
-scoreparameters<-function(scoretype=c("bge","bde","bdecat","usr"), data,
+scoreparameters <- function(scoretype=c("bge","bde","bdecat","usr"), data,
                           bgepar=list(am=1, aw=NULL),
                           bdepar=list(chi=0.5, edgepf=2),
                           bdecatpar=list(chi=0.5, edgepf=2, bdecatCvec=NULL),
@@ -57,6 +57,9 @@ scoreparameters<-function(scoretype=c("bge","bde","bdecat","usr"), data,
   if(DBN) {
     if(is.null(dbnpar$b)) bgnodes<-NULL else if(dbnpar$b>0) bgnodes<-c(1:dbnpar$b) else bgnodes<-NULL
   }
+
+  # make sure it is in the right format
+  data <- as.data.frame(data)
 
   bgn<-length(bgnodes)
 

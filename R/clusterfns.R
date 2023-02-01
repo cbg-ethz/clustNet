@@ -110,6 +110,7 @@ avescore <- function(samplescores,numsamps){
   }
   return(averagescores)
 }
+
 reassignsamplesprop <- function(samplescores,numsamps,gamma){
   newclustermembership <-rep(0,numsamps) # to store the new cluster
   for(s in 1:numsamps){ # run through the samples
@@ -122,7 +123,6 @@ reassignsamplesprop <- function(samplescores,numsamps,gamma){
   }
   return(newclustermembership)
 }
-
 
 getBestSeed <- function(assignprogress){
   #get the vector with loglikelihood reached at the EM convergence
@@ -169,23 +169,27 @@ get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=N
   # measure time
   start_time <- Sys.time()
 
-  # Binary clustering
   startseed <- EMseeds[1]
-  nIterations <- 10
-  chi <- 0.5 # pseudocounts for the Beta prior
 
-  if(is.null(newallrelativeprobabs)){
-    binClust <- BBMMclusterEM(binaryMatrix = myData, chi = chi, k_clust = k_clust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
-    newallrelativeprobabs <- binClust$relativeweights
-    newclustermembership <- binClust$newclustermembership
-    newclustermembership <- reassignsamples(newallrelativeprobabs)
-  }
-
-  #
+  # pre-clustering step
   if (categorical){
     score_type <- "bdecat"
+    # Categorical clustering
+    binClust <- mclust::Mclust(myData, k_clust)
+    newallrelativeprobabs <- binClust$z
+    newclustermembership <- aa$classification
+    newclustermembership <- reassignsamples(newallrelativeprobabs)
   }else{
     score_type <- "bde"
+    # Binary clustering
+    if(is.null(newallrelativeprobabs)){
+      nIterations <- 10
+      chi <- 0.5 # pseudocounts for the Beta prior
+      binClust <- BBMMclusterEM(binaryMatrix = myData, chi = chi, k_clust = k_clust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
+      newallrelativeprobabs <- binClust$relativeweights
+      newclustermembership <- binClust$newclustermembership
+      newclustermembership <- reassignsamples(newallrelativeprobabs)
+    }
   }
 
   # # number of iterations (and respective seeds)
@@ -276,15 +280,17 @@ get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=N
         #define score parameters
         if (n_bg>0){
           # apply different scores for categorical / binary data
-          scorepar <- scoreparameters(score_type=score_type ,myData, edgepmat = edgepmat,
+          scorepar <- scoreparameters(score_type, myData, edgepmat = edgepmat,
                                            weightvector=allrelativeprobabs[,k],
                                            bdepar=bdepar, bgnodes=(n+1):(n+n_bg))
         }else{
-          scorepar <- scoreparameters(score_type=score_type,myData, edgepmat = edgepmat,
+          scorepar <- scoreparameters(score_type, myData, edgepmat = edgepmat,
                                            weightvector=allrelativeprobabs[,k],
                                            bdepar=bdepar)
         }
 
+        # check mark
+        print("test")
 
         #find MAP DAG using iterative order MCMC
         maxfit<-BiDAG::iterativeMCMC(scorepar,addspace=clustercenters[[k]],verbose=FALSE)
