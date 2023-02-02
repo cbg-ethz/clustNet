@@ -40,11 +40,14 @@ cluster_res_t <- get_clusters(sampled_data, k_clust = kclusters)
 cluster_res_t <- get_clusters(sampled_data, k_clust = kclusters, 
                               newallrelativeprobabs = cluster_res_t$newallrelativeprobabs, categorical=FALSE)
 
+library(mclust)
+adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
+
 cluster_res_t <- get_clusters(sampled_data, k_clust = kclusters, 
                               newallrelativeprobabs = cluster_res_t$newallrelativeprobabs, categorical=TRUE)
 
+adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
 
-library(mclust)
 adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
 
 
@@ -56,6 +59,7 @@ adjustedRandIndex(simulation_data$cluster_membership, aa$classification)
 
 res_BBMM2 <- BBMMclusterEM(sampled_data, chi = 0.5, k_clust = 5, startseed = 1 * 100, nIterations = 10, verbose = TRUE)
 adjustedRandIndex(simulation_data$cluster_membership, res_BBMM2$newclustermembership)
+
 
 # alternatives:
 # cluster_res <- netCluster(my_data, kclust = 3)
