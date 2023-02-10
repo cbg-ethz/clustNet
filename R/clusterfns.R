@@ -164,7 +164,7 @@ getBestSeed <- function(assignprogress){
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL, categorical=FALSE, bdecatCvec=NULL){
+get_clusters <- function(myData, k_clust=3, n_bg=0, itLim=50, EMseeds=1, edgepmat=NULL, blacklist=NULL, bdepar=list(chi = 0.5, edgepf = 16), categorical=FALSE, newallrelativeprobabs=NULL){
 
   # measure time
   start_time <- Sys.time()
@@ -293,7 +293,7 @@ get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=N
         print("test")
 
         #find MAP DAG using iterative order MCMC
-        maxfit<-BiDAG::iterativeMCMC(scorepar,addspace=clustercenters[[k]],verbose=FALSE)
+        maxfit<-BiDAG::iterativeMCMC(scorepar,addspace=clustercenters[[k]],verbose=FALSE,blacklist=blacklist)
         #store it
         clustercenters[[k]]<-maxfit$DAG
 
@@ -498,7 +498,7 @@ get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=N
 #'         }
 #'
 #'         #find MAP DAG using iterative order MCMC
-#'         maxfit<-BiDAG::iterativeMCMC(scorepar,addspace=clustercenters[[k]],verbose=FALSE)
+#'         maxfit<-BiDAG::iterativeMCMC(scorepar,addspace=clustercenters[[k]],verbose=FALSE,blacklist=blacklist)
 #'         #store it
 #'         clustercenters[[k]]<-maxfit$DAG
 #'
@@ -766,7 +766,7 @@ get_clusters <- function(myData,k_clust=3,n_bg=0,itLim=50, EMseeds=1, edgepmat=N
 #'         }
 #'
 #'         #find MAP DAG using iterative order MCMC
-#'         maxfit<-BiDAG::iterativeMCMC(scorepar,addspace=clustercenters[[k]],verbose=FALSE)
+#'         maxfit<-BiDAG::iterativeMCMC(scorepar,addspace=clustercenters[[k]],verbose=FALSE,blacklist=blacklist)
 #'         #store it
 #'         clustercenters[[k]]<-maxfit$DAG
 #'
