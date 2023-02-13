@@ -28,23 +28,26 @@ Simulate binary data and learn clusters subsequently.
 
 ```{r, eval = FALSE}
 # Simulate binary data
-kclusters <- 3
+k_clust <- 3
 ss <- c(400, 500, 600) # samples in each cluster
-simulation_data <- netClust::sampleData(k_clust = kclusters, n_vars = 20, n_samples = ss)
+simulation_data <- netClust::sampleData(k_clust = k_clust, n_vars = 20, n_samples = ss)
 
 sampled_data <- simulation_data$sampled_data
 
 # Network-based clustering
-cluster_res_t <- get_clusters(sampled_data, k_clust = kclusters)
+cluster_res_t <- get_clusters(sampled_data, k_clust = k_clust)
 
-# cluster_res_t <- get_clusters(sampled_data, k_clust = kclusters, 
+library(mclust)
+cluster_res_t <- get_clusters(sampled_data, k_clust = k_clust, categorical = TRUE)
+
+# cluster_res_t <- get_clusters(sampled_data, k_clust = k_clust,
 #                               newallrelativeprobabs = cluster_res_t$newallrelativeprobabs, categorical=FALSE)
 
 library(mclust)
 adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
 
 
-# cluster_res_t <- get_clusters(sampled_data, k_clust = kclusters, 
+# cluster_res_t <- get_clusters(sampled_data, k_clust = k_clust, 
 #                               newallrelativeprobabs = cluster_res_t$newallrelativeprobabs, categorical=TRUE)
 # 
 # adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
@@ -52,10 +55,10 @@ adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembe
 # adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
 # 
 # 
-# res_kmeans1 <- kmeans(sampled_data, kclusters)
+# res_kmeans1 <- kmeans(sampled_data, k_clust)
 # adjustedRandIndex(simulation_data$cluster_membership, res_kmeans1$cluster)
 # 
-# aa <- mclust::Mclust(sampled_data, kclusters)
+# aa <- mclust::Mclust(sampled_data, k_clust)
 # adjustedRandIndex(simulation_data$cluster_membership, aa$classification)
 # 
 # res_BBMM2 <- BBMMclusterEM(sampled_data, chi = 0.5, k_clust = 5, startseed = 1 * 100, nIterations = 10, verbose = TRUE)

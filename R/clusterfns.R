@@ -290,7 +290,6 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, itLim=50, EMseeds=1, edgepma
         }
 
         # check mark
-        print("test")
 
         #find MAP DAG using iterative order MCMC
         maxfit<-BiDAG::iterativeMCMC(scorepar,addspace=clustercenters[[k]],verbose=FALSE,blacklist=blacklist)
@@ -318,7 +317,7 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, itLim=50, EMseeds=1, edgepma
                                              bdepar=bdepar)
           }
           scorepar$n <- n # to avoid to scoring over background nodes
-          scoresagainstclusters[,k] <- scoreagainstDAG(scorepar,clustercenters[[k]],bdecatCvec=bdecatCvec)
+          scoresagainstclusters[,k] <- scoreagainstDAG(scorepar,clustercenters[[k]])
           scorepar$n <- n+n_bg # recet after scoring
 
           return(scoresagainstclusters[,k])
