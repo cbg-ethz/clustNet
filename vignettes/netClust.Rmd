@@ -46,6 +46,13 @@ cluster_res_t <- get_clusters(sampled_data, k_clust = k_clust, categorical = TRU
 library(mclust)
 adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
 
+# Bernoulli mixture models 
+test_res <- BBMMclusterEM(sampled_data, 0.5, 3, nIterations = 10, verbose=TRUE)
+adjustedRandIndex(simulation_data$cluster_membership, test_res$newclustermembership)
+
+test_res <- BMMclusterEM(sampled_data, 0.5, 3, nIterations = 10, verbose=TRUE)
+adjustedRandIndex(simulation_data$cluster_membership, test_res$clustermembership)
+
 
 # cluster_res_t <- get_clusters(sampled_data, k_clust = k_clust, 
 #                               newallrelativeprobabs = cluster_res_t$newallrelativeprobabs, categorical=TRUE)

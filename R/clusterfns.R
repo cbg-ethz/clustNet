@@ -175,10 +175,14 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, itLim=50, EMseeds=1, edgepma
   if (categorical){
     score_type <- "bdecat"
     # Categorical clustering
-    binClust <- mclust::Mclust(myData, k_clust)
-    newallrelativeprobabs <- binClust$z
-    newclustermembership <- binClust$classification
-    newclustermembership <- reassignsamples(newallrelativeprobabs)
+    if(is.null(newallrelativeprobabs)){
+      nIterations <- 10
+      chi <- 0.5 # pseudocounts for the Beta prior
+      binClust <- BMMclusterEM(binaryMatrix = myData, chi = chi, k_clust = k_clust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
+      newallrelativeprobabs <- binClust$relativeweights
+      newclustermembership <- binClust$newclustermembership
+      newclustermembership <- reassignsamples(newallrelativeprobabs)
+    }
   }else{
     score_type <- "bde"
     # Binary clustering
