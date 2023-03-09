@@ -51,7 +51,7 @@ test_res <- BBMMclusterEM(sampled_data, 0.5, 3, nIterations = 10, verbose=TRUE)
 adjustedRandIndex(simulation_data$cluster_membership, test_res$newclustermembership)
 
 test_res <- BMMclusterEM(sampled_data, 0.5, 3, nIterations = 10, verbose=TRUE)
-adjustedRandIndex(simulation_data$cluster_membership, test_res$clustermembership)
+adjustedRandIndex(simulation_data$cluster_membership, test_res$newclustermembership)
 
 
 # cluster_res_t <- get_clusters(sampled_data, k_clust = k_clust, 

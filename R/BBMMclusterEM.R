@@ -73,7 +73,7 @@ doIterate <- function(idx, startseed, chi, k_clust, datatocluster,verbose) {
       print(paste("BIC is",testBIC))
     }
 
-    return(list(seed = seednumber, testAIC = testAIC, newclustermembership = newclustermembership, relativeweights=clusterresults$relativeweights))
+    return(list(seed = seednumber, testAIC = testAIC, testBIC = testBIC, newclustermembership = newclustermembership, relativeweights=clusterresults$relativeweights))
 }
 
 # categorical version of binary clustering function BBMMclusterEM
@@ -154,7 +154,7 @@ doIterate_cat <- function(idx, startseed, chi, k_clust, datatocluster,verbose) {
     print(paste("BIC is",testBIC))
   }
 
-  return(list(seed = seednumber, testAIC = testAIC, newclustermembership = newclustermembership, relativeweights=clusterresults$relativeweights))
+  return(list(seed = seednumber, testAIC = testAIC, testBIC = testBIC, newclustermembership = newclustermembership, relativeweights=clusterresults$relativeweights))
 }
 # This function samples an element from a vector properly
 
@@ -355,12 +355,19 @@ scoreagainstemptyEMcluster <- function(k_clust, chi, relativeweights, tauvec, da
     scoresagainstclusters<-matrix(0,mbig,k_clust)
 
     for(kk in 1:k_clust){
-        weightvec<-relativeweights[,kk]
-        Datawone<- datatocluster*weightvec # the weighted 1s
+        # the binary version is commented out
+        # weightvec<-relativeweights[,kk]
+        # Datawone<- datatocluster*weightvec # the weighted 1s
         #Datawzero<- (t(1-Datafull)*weightvec) # the weighted 0s
-        thetas<-(colSums(Datawone)+0.5*chi)/(sum(weightvec)+chi) # we add the prior
+        # thetas<-(colSums(Datawone)+0.5*chi)/(sum(weightvec)+chi) # we add the prior
         # the posterior means give the (log) probability of the observations
-        scoresagainstclusters[,kk]<-colSums(t(datatoscore)*log(thetas)+t(1-datatoscore)*log(1-thetas))
+        # scoresagainstclusters[,kk]<-colSums(t(datatocluster)*log(thetas)+t(1-datatocluster)*log(1-thetas))
+
+        # categorical version: this part inserts an empty graph to the scoreagainstDAG function
+        bdepar=list(chi = chi, edgepf = 16)
+        clustercenters <- matrix(0, nrow = nbig, ncol = nbig) # empty graph
+        scorepar <- scoreparameters("bdecat", datatocluster, weightvector = relativeweights[,kk], bdepar = bdepar)
+        scoresagainstclusters[,kk] <- scoreagainstDAG(scorepar,clustercenters)
     }
 
     # calculate the weights
