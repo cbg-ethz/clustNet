@@ -407,6 +407,7 @@ scoreparameters <- function(scoretype=c("bge","bde","bdecat","usr"), data,
       initparam$scoreconstvec[i+1]<-noparams*lgamma(initparam$chi/noparams)-2*noparams*lgamma(initparam$chi/(2*noparams))-i*log(initparam$pf) #
     }
   } else if (scoretype=="bdecat") {
+    bdecatpar <- bdepar
     if(is.null(bdecatpar$chi)) {bdecatpar$chi<-0.5}
     if(is.null(bdecatpar$edgepf)) {bdecatpar$edgepf<-2}
     maxparents<-n-1
