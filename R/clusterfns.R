@@ -858,3 +858,4 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, itLim=50, EMseeds=1, edgepma
 #   # return results of best seed
 #   return(list("clustermembership"=bestRes$clustermembership,"assignprogress"=bestRes$assignprogress,"DAGs"=bestRes$DAGs,"bestSeed"=bestSeed))
 # }
+
