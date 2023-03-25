@@ -166,7 +166,7 @@ getBestSeed <- function(assignprogress){
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1, edgepmat=NULL, blacklist=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL){
+get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edgepmat=NULL, blacklist=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL){
 
   # measure time
   start_time <- Sys.time()
@@ -276,6 +276,8 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1, edgep
   scoresagainstclusters<-matrix(ncol=k_clust,nrow=ss)
   # initial cluster assignment
   initial_newallrelativeprobabs <- newallrelativeprobabs
+  # store clustercenters
+  all_clustercenters <- list()
 
   for (s in 1:EMn) {
     diffy<-1
@@ -393,6 +395,7 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1, edgep
     scoresprogress[[s]]<-scoresagainstclusters
     probs[[s]]<-newallrelativeprobabs
     # relabs[[s]]<-res$relabel
+    all_clustercenters[[s]] <- clustercenters
   }
 
   # assignprogress[[s]]$likel[length(cluster_res_t$assignprogress$likel)]
@@ -401,7 +404,7 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1, edgep
     bestSeed <- getBestSeed(assignprogress)
     newallrelativeprobabs <- probs[[bestSeed]]
     assignprogress <- assignprogress[[bestSeed]]
-    clustercenters <- clustercenters[[bestSeed]]
+    clustercenters <- all_clustercenters[[bestSeed]]
     newclustermembership <- newclustermembership[[bestSeed]]
     names(newclustermembership) <- rownames(myData)
     print(paste0("Best seed: ", bestSeed))
