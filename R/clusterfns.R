@@ -156,16 +156,17 @@ getBestSeed <- function(assignprogress){
 #' @param myData Data to be clustered
 #' @param k_clust Number of clusters
 #' @param n_bg Number of covariates
-#' @param itLim Maximum number of iterations
+# #' @param itLim Maximum number of iterations
 #' @param EMseeds Seeds
 #' @param edgepmat Matrix of penalized edges in the search space
 #' @param bdepar Hyperparameters for structure learning (BDE score)
 #' @param newallrelativeprobabs relative probability of cluster assignment of each sample
-#' @param err error threshold defining when to stop
+#' @param quick if TRUE, then the runtime is quick
+# #' @param err error threshold defining when to stop
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-get_clusters <- function(myData, k_clust=3, n_bg=0, itLim=50, EMseeds=1, edgepmat=NULL, blacklist=NULL, bdepar=list(chi = 0.5, edgepf = 16), categorical=FALSE, newallrelativeprobabs=NULL){
+get_clusters <- function(myData, k_clust=3, n_bg=0, EMseeds=1, edgepmat=NULL, blacklist=NULL, bdepar=list(chi = 0.5, edgepf = 16), categorical=FALSE, newallrelativeprobabs=NULL, quick=TRUE){
 
   # measure time
   start_time <- Sys.time()
