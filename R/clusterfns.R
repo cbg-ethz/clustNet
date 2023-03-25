@@ -166,7 +166,7 @@ getBestSeed <- function(assignprogress){
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
-get_clusters <- function(myData, k_clust=3, n_bg=0, EMseeds=1, edgepmat=NULL, blacklist=NULL, bdepar=list(chi = 0.5, edgepf = 16), categorical=FALSE, newallrelativeprobabs=NULL, quick=TRUE){
+get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1, edgepmat=NULL, blacklist=NULL, bdepar=list(chi = 0.5, edgepf = 16), newallrelativeprobabs=NULL){
 
   # measure time
   start_time <- Sys.time()

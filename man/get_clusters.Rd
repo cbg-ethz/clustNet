@@ -8,13 +8,13 @@ get_clusters(
   myData,
   k_clust = 3,
   n_bg = 0,
-  itLim = 50,
   EMseeds = 1,
   edgepmat = NULL,
   blacklist = NULL,
   bdepar = list(chi = 0.5, edgepf = 16),
   categorical = FALSE,
-  newallrelativeprobabs = NULL
+  newallrelativeprobabs = NULL,
+  quick = TRUE
 )
 }
 \arguments{
@@ -24,8 +24,6 @@ get_clusters(
 
 \item{n_bg}{Number of covariates}
 
-\item{itLim}{Maximum number of iterations}
-
 \item{EMseeds}{Seeds}
 
 \item{edgepmat}{Matrix of penalized edges in the search space}
@@ -33,6 +31,8 @@ get_clusters(
 \item{bdepar}{Hyperparameters for structure learning (BDE score)}
 
 \item{newallrelativeprobabs}{relative probability of cluster assignment of each sample}
+
+\item{quick}{if TRUE, then the runtime is quick}
 }
 \value{
 a list containing the clusterMemberships and "assignprogress"

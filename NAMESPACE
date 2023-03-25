@@ -3,6 +3,7 @@
 export(bestAICsearch)
 export(bestAICsearch_test)
 export(get_clusters)
+export(get_clusters_bernoulli)
 export(sampleData)
 export(scoreagainstDAG)
 export(scoreparameters)
