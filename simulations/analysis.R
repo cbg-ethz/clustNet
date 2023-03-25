@@ -1,14 +1,14 @@
 library(ggpubr)
 library(ggplot2)
 library(RColorBrewer)
-library(netClust)
+library(graphClust)
 library(reshape2)
 # library(extrafont)
 
 # define functions
 nice_plot <- function(samples){
   test_data <- melt(samples)
-  test_data$Var3 <- c(rep("Cov-Adjust", dim(samples)[1]), rep("netClust", 2*dim(samples)[1]),
+  test_data$Var3 <- c(rep("Cov-Adjust", dim(samples)[1]), rep("graphClust", 2*dim(samples)[1]),
                       rep("kmeans", 2*dim(samples)[1]), rep("Mclust", 2*dim(samples)[1]),
                       rep("BMM", 2*dim(samples)[1]))
 
@@ -53,7 +53,7 @@ nice_plot <- function(samples){
   return(p_nice)
 }
 
-setwd("/Users/frbayer/Documents/phd_main/packages/netClust/simulations/results")
+setwd("/Users/frbayer/Documents/phd_main/packages/graphClust/simulations/results")
 
 color_list <- RColorBrewer::brewer.pal(n = 8, name = "RdYlBu")
 cols <- color_list[c(1, 3, 8, 3, 8, 3, 8, 3, 8)]
@@ -104,7 +104,7 @@ legend_2 <- get_legend(my_legend2)
 
 
 
-## plot netClust versions for different numbers of covariates
+## plot graphClust versions for different numbers of covariates
 res1 <- readRDS("results--k_clust-6--n_vars-20--n_bg-0--n_it-30--different--TRUE.rds")
 nice_plot(res1$correct_samples)
 nbg_data <- melt(res1$correct_samples[,1:3])
@@ -182,7 +182,7 @@ dev.off()
 ## All Methods displayed ##
 ###########################
 
-## plot netClust versions for different numbers of covariates
+## plot graphClust versions for different numbers of covariates
 res1 <- readRDS("results--k_clust-6--n_vars-20--n_bg-0--n_it-30--different--TRUE.rds")
 nice_plot(res1$correct_samples)
 nbg_data <- melt(res1$correct_samples[,1:9])
@@ -293,7 +293,7 @@ dev.off()
 ## Varied Number of Clusters ##
 ###############################
 
-## plot netClust versions for different numbers of covariates
+## plot graphClust versions for different numbers of covariates
 res1 <- readRDS("results--k_clust-2--n_vars-20--n_bg-10--n_it-20--different--TRUE.rds")
 nice_plot(res1$correct_samples)
 nbg_data <- melt(res1$correct_samples[,1:9])
@@ -415,7 +415,7 @@ graph::plot(res3$sampled_results$bayes_nets[[6]]$DAG, nodeAttrs=list(fillcolor=n
 dev.off()
 par(mfrow = c(1,1))
 
-## plot netClust versions for different numbers of covariates
+## plot graphClust versions for different numbers of covariates
 
 res1 <- readRDS("results--k_clust-6--n_vars-20--n_bg-0--n_it-30--different--TRUE.rds")
 nice_plot(res1$correct_samples)
@@ -451,7 +451,7 @@ ggplot2::ggplot(data=nbg_data, aes(x=reorder(nbg, value), y=value, fill = Method
 
 samples <- res3$correct_samples[,2:9]
 test_data <- melt(samples)
-test_data$Var3 <- c(rep("netClust", 2*dim(samples)[1]),
+test_data$Var3 <- c(rep("graphClust", 2*dim(samples)[1]),
                     rep("kmeans", 2*dim(samples)[1]), rep("Mclust", 2*dim(samples)[1]),
                     rep("BMM", 2*dim(samples)[1]))
 

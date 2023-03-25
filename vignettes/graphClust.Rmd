@@ -1,10 +1,10 @@
 ---
-title: "netClust"
+title: "graphClust"
 output: rmarkdown::html_vignette
 description: >
   Network-based clustering of binary data. Optional adjustment for covariates. 
 vignette: >
-  %\VignetteIndexEntry{netClust}
+  %\VignetteIndexEntry{graphClust}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(devtools)
 load_all()
-library(netClust)
+library(graphClust)
 ```
 
 
@@ -30,7 +30,7 @@ Simulate binary data and learn clusters subsequently.
 # Simulate binary data
 k_clust <- 3
 ss <- c(400, 500, 600) # samples in each cluster
-simulation_data <- netClust::sampleData(k_clust = k_clust, n_vars = 20, n_samples = ss)
+simulation_data <- graphClust::sampleData(k_clust = k_clust, n_vars = 20, n_samples = ss)
 
 sampled_data <- simulation_data$sampled_data
 
@@ -73,7 +73,7 @@ adjustedRandIndex(simulation_data$cluster_membership, test_res$newclustermembers
 
 
 # alternatives:
-# cluster_res <- netCluster(my_data, kclust = 3)
-# cluster_res_test <- netClustParallel(my_data, kclust = 3)
-# cluster_res_p <- netClusterParallel(my_data, kclust = 3)
+# cluster_res <- graphCluster(my_data, kclust = 3)
+# cluster_res_test <- graphClustParallel(my_data, kclust = 3)
+# cluster_res_p <- graphClusterParallel(my_data, kclust = 3)
 ```

@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 library(combinat)
-library(netClust)
+library(graphClust)
 library(mclust)
 
 # pass parameters

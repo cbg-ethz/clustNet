@@ -460,7 +460,7 @@ cluster_benchmark <- function(sampled_data, sampled_membership, k_clust = 3, n_b
   }
 
   # label output
-  colnames(correct_samples) <- c("Cov-Adjust", "netClust (cov & var)", "netClust (var)",
+  colnames(correct_samples) <- c("Cov-Adjust", "graphClust (cov & var)", "graphClust (var)",
                                  "kmeans (cov & var)", "kmeans (var)", "Mclust (cov & var)",
                                  "Mclust (var)", "BMM (cov & var)", "BMM (var)")
 
@@ -480,7 +480,7 @@ benchmark_methods <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_it = 10, n_s
     set.seed(ww+start_seed-1)
 
     # sample data
-    sampled_results <- netClust:::sampleData(k_clust=k_clust, n_vars=n_vars, n_bg=n_bg, n_samples=n_samples,
+    sampled_results <- graphClust:::sampleData(k_clust=k_clust, n_vars=n_vars, n_bg=n_bg, n_samples=n_samples,
                                              bgedges=bgedges, equal_cpt_bg=equal_cpt_bg)
     sampled_data <- sampled_results$sampled_data
     sampled_membership <- sampled_results$cluster_membership
@@ -489,11 +489,11 @@ benchmark_methods <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_it = 10, n_s
     sampled_results_list <- append(sampled_results_list, sampled_results)
 
     # clustering
-    correct_samples[ww,] <- netClust:::cluster_benchmark(sampled_data, sampled_membership, k_clust = k_clust,
+    correct_samples[ww,] <- graphClust:::cluster_benchmark(sampled_data, sampled_membership, k_clust = k_clust,
                                                          n_bg = n_bg, n_vars = n_vars, n_rep = 1)
   }
 
-  colnames(correct_samples) <- c("Cov-Adjust", "netClust (cov & var)", "netClust (var)",
+  colnames(correct_samples) <- c("Cov-Adjust", "graphClust (cov & var)", "graphClust (var)",
                                  "kmeans (cov & var)", "kmeans (var)", "Mclust (cov & var)",
                                  "Mclust (var)", "BMM (cov & var)", "BMM (var)")
 

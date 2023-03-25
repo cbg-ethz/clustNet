@@ -1,5 +1,5 @@
 library(combinat)
-library(netClust)
+library(graphClust)
 library(mclust)
 
 library(cluster)
@@ -18,12 +18,12 @@ sseed <- 1
 
 
 # sample data
-sampled_results <- netClust:::sampleData(k_clust = k_clust, n_vars = n_vars, n_bg = n_bg)
+sampled_results <- graphClust:::sampleData(k_clust = k_clust, n_vars = n_vars, n_bg = n_bg)
 sampled_data <- sampled_results$sampled_data
 sampled_membership <- sampled_results$cluster_membership
 
 # clustering
-correct_samples <- netClust:::cluster_benchmark(sampled_data, sampled_membership, kclust = k_clust,
+correct_samples <- graphClust:::cluster_benchmark(sampled_data, sampled_membership, kclust = k_clust,
                                                 nbg = n_bg, n_vars = n_vars, n_rep = 2)
 
 # correct_fraction <- correct_samples/(dim(sampled_data)[1])
