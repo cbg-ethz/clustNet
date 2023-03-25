@@ -161,6 +161,7 @@ getBestSeed <- function(assignprogress){
 #' @param edgepmat Matrix of penalized edges in the search space
 #' @param bdepar Hyperparameters for structure learning (BDE score)
 #' @param newallrelativeprobabs relative probability of cluster assignment of each sample
+#' @param err error threshold defining when to stop
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
@@ -171,30 +172,62 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, itLim=50, EMseeds=1, edgepma
 
   startseed <- EMseeds[1]
 
-  # pre-clustering step
-  if (categorical){
+  if (missing(myData)) stop("Need a categorical matrix as input to cluster.")
+  if (!all(myData%%1==0)) stop("All categorical variables need to be specified as integers. Binary variables can be 0 or 1.")
+
+  if (!all(myData < 2)){
+    # cetegorical version
     score_type <- "bdecat"
-    # Categorical clustering
-    if(is.null(newallrelativeprobabs)){
-      nIterations <- 10
-      chi <- 0.5 # pseudocounts for the Beta prior
-      binClust <- BMMclusterEM(binaryMatrix = myData, chi = chi, k_clust = k_clust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
-      newallrelativeprobabs <- binClust$relativeweights
-      newclustermembership <- binClust$newclustermembership
-      newclustermembership <- reassignsamples(newallrelativeprobabs)
-    }
   }else{
+    # binary version
     score_type <- "bde"
-    # Binary clustering
-    if(is.null(newallrelativeprobabs)){
-      nIterations <- 10
-      chi <- 0.5 # pseudocounts for the Beta prior
-      binClust <- BBMMclusterEM(binaryMatrix = myData, chi = chi, k_clust = k_clust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
-      newallrelativeprobabs <- binClust$relativeweights
-      newclustermembership <- binClust$newclustermembership
-      newclustermembership <- reassignsamples(newallrelativeprobabs)
-    }
   }
+
+  #define when EM converges
+  if(quick){
+    err<-1e-6
+    nIterations <- 10
+    itLim <- 50
+  }else{
+    err<-1e-10
+    nIterations <- 30
+    itLim <- 100
+  }
+
+  # Prior Bernoulli clustering
+  if(is.null(newallrelativeprobabs)){
+    nIterations <- 30
+    chi <- 0.5 # pseudocounts for the Beta prior
+    binClust <- get_clusters_bernoulli(binaryMatrix = myData, chi = chi, k_clust = k_clust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
+    newallrelativeprobabs <- binClust$relativeweights
+    newclustermembership <- binClust$newclustermembership
+    newclustermembership <- reassignsamples(newallrelativeprobabs)
+  }
+
+  # # pre-clustering step
+  # if (categorical){
+  #   score_type <- "bdecat"
+  #   # Categorical clustering
+  #   if(is.null(newallrelativeprobabs)){
+  #     nIterations <- 10
+  #     chi <- 0.5 # pseudocounts for the Beta prior
+  #     binClust <- BMMclusterEM(binaryMatrix = myData, chi = chi, k_clust = k_clust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
+  #     newallrelativeprobabs <- binClust$relativeweights
+  #     newclustermembership <- binClust$newclustermembership
+  #     newclustermembership <- reassignsamples(newallrelativeprobabs)
+  #   }
+  # }else{
+  #   score_type <- "bde"
+  #   # Binary clustering
+  #   if(is.null(newallrelativeprobabs)){
+  #     nIterations <- 10
+  #     chi <- 0.5 # pseudocounts for the Beta prior
+  #     binClust <- BBMMclusterEM(binaryMatrix = myData, chi = chi, k_clust = k_clust, startseed = startseed, nIterations = nIterations, verbose=TRUE)
+  #     newallrelativeprobabs <- binClust$relativeweights
+  #     newclustermembership <- binClust$newclustermembership
+  #     newclustermembership <- reassignsamples(newallrelativeprobabs)
+  #   }
+  # }
 
   # # number of iterations (and respective seeds)
   # nSeeds <- 2
@@ -213,8 +246,6 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, itLim=50, EMseeds=1, edgepma
 
   # #prior pseudo counts
   # chixi<-0.5
-  #define when EM converges
-  err<-1e-6
   # #edge penalization factor
   # edgepfy<-16
   #define different seeds to run EM

@@ -105,6 +105,53 @@ BMMclusterEM <- function(binaryMatrix, chi, k_clust, startseed=100, nIterations=
 }
 
 
+#' @title get_clusters_bernoulli
+#'
+#' @description Categorical version of Bernoulli mixture model (binary clustering function BBMMclusterEM)
+#'
+#' @param binaryMatrix Data to be clustered
+#' @param chi hyperparameter chi
+#' @param k_clust Number of clusters
+#' @param startseed Start seed
+#' @param nIterations number of iterations
+#' @param verbose set TRUE to display progress
+#'
+#' @return a list containing the clusterMemberships
+#' @export
+get_clusters_bernoulli <- function(binaryMatrix, chi = 0.5, k_clust = 5, startseed=100, nIterations=10, verbose=FALSE) {
+
+  # set.seed(startseed)
+  # Check for input arguments
+  if (missing(binaryMatrix)) stop("Need a categorical matrix as input to cluster.")
+  if (!all(binaryMatrix%%1==0)) stop("All categorical variables need to be specified as integers. Binary variables can be 0 or 1.")
+  # if(missing(chi)) stop('Need to provide a value for chi.')
+  if(chi==0) {
+    #print('Zero chi, setting chi to 1e-3')
+    chi<-1e-3
+  }
+  # if (missing(k_clust)) stop('Need to provide a value for k_clust.')
+  if (as.integer(nIterations) < 1) {
+    stop('Need to specify a positive integer.')
+  } else {
+    nIterations <- as.integer(nIterations)
+  }
+  if (startseed < 0) stop("Need to specify a positive integer as startseed.")
+
+  if (!all(binaryMatrix < 2)){
+    # cetegorical version
+    tmp <- lapply(seq(nIterations), doIterate_cat, startseed, chi, k_clust, binaryMatrix,verbose)
+  }else{
+    # binary version
+    tmp <- lapply(seq(nIterations), doIterate, startseed, chi, k_clust, binaryMatrix,verbose)
+  }
+
+  idx <- which.min(sapply(tmp, '[', 'testAIC'))
+
+  output <- tmp[[idx]]
+
+  return(output)
+}
+
 doIterate_cat <- function(idx, startseed, chi, k_clust, datatocluster,verbose) {
   # categorical version
 
