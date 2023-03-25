@@ -6,9 +6,6 @@
 #'@param datatoscore (optional) a matrix (vector) containing binary (for BDe score) or continuous (for the BGe score) observations (or just one observation)  to be scored; the number of columns should be equal to the number of variables in the Bayesian network, the number of rows should be equal to the number of observations; by default all data from \code{scorepar} parameter is used
 #'@param marginalise (optional for continuous data), whether to use the posterior mean for scoring (default) or to marginalise over the posterior distribution (more computationally costly)
 #'@return the log of the BDe/BGe score of given observations against a DAG
-#'@examples
-#'  Asiascore<-scoreparameters("bde", Asia[1:100,]) #we wish to score only first 100 observations
-#'  scoreagainstDAG(Asiascore, Asiamat)
 #'
 #'@export
 

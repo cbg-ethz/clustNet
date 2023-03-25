@@ -159,6 +159,7 @@ getBestSeed <- function(assignprogress){
 # #' @param itLim Maximum number of iterations
 #' @param EMseeds Seeds
 #' @param edgepmat Matrix of penalized edges in the search space
+#' @param blacklist Matrix of forbidden edges in the search space
 #' @param bdepar Hyperparameters for structure learning (BDE score)
 #' @param newallrelativeprobabs relative probability of cluster assignment of each sample
 #' @param quick if TRUE, then the runtime is quick

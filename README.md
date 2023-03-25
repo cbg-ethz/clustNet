@@ -34,16 +34,27 @@ Example
 library(graphClust)
 
 # Simulate binary data from 3 clusters
-k_clust <- 3ss <- c(400, 500, 600) # samples in each clustersimulation_data <- graphClust::sampleData(k_clust = k_clust, n_vars = 20, n_samples = ss)sampled_data <- simulation_data$sampled_data# Network-based clusteringcluster_res <- get_clusters(sampled_data, k_clust = k_clust)
+k_clust <- 3
+ss <- c(400, 500, 600) # samples in each cluster
+simulation_data <- graphClust::sampleData(k_clust = k_clust, n_vars = 20, n_samples = ss)
+sampled_data <- simulation_data$sampled_data
+
+# Network-based clustering
+cluster_res <- get_clusters(sampled_data, k_clust = k_clust)
 
 # Calculate the AIC 
-library(mclust)adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
+library(mclust)
+adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
 
 # Visualize the networks
-library(ggplot2)library(ggraph)library(igraph)library(ggpubr)
-plot_clusters(cluster_res_t)
+library(ggplot2)
+library(ggraph)
+library(igraph)
+library(ggpubr)
+
+graphClust:::plot_clusters(cluster_res_t)
 
 # Visualize a single network
-my_graph <- igraph::graph_from_adjacency_matrix(cluster_res_t$DAGs[[1]], mode="directed")nice_DAG_plot(my_graph)
-
-```
+my_graph <- igraph::graph_from_adjacency_matrix(cluster_res_t$DAGs[[1]], mode="directed")
+graphClust:::nice_DAG_plot(my_graph)
+```

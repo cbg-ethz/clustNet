@@ -27,8 +27,3 @@ the log of the BDe/BGe score of given observations against a DAG
 \description{
 This function calculates the score of a given sample against a DAG represented by its incidence matrix.
 }
-\examples{
- Asiascore<-scoreparameters("bde", Asia[1:100,]) #we wish to score only first 100 observations
- scoreagainstDAG(Asiascore, Asiamat)
-
-}
