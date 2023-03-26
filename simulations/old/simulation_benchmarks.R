@@ -18,7 +18,7 @@ sseed <- 1
 
 
 # sample data
-sampled_results <- graphClust:::sampleData(k_clust = k_clust, n_vars = n_vars, n_bg = n_bg)
+sampled_results <- sampleData(k_clust = k_clust, n_vars = n_vars, n_bg = n_bg)
 sampled_data <- sampled_results$sampled_data
 sampled_membership <- sampled_results$cluster_membership
 

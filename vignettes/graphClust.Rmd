@@ -17,8 +17,6 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(devtools)
-load_all()
 library(graphClust)
 ```
 

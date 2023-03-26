@@ -1,4 +1,12 @@
 
+#' @title nice_DAG_plot
+#'
+#' @description DAG visualization
+#'
+#' @param my_graph DAG
+#' @param print_direct print DAG if TRUE
+#'
+#' @export
 nice_DAG_plot <- function(my_graph, print_direct=TRUE){
 
   # add labelling
@@ -10,7 +18,7 @@ nice_DAG_plot <- function(my_graph, print_direct=TRUE){
   name <- names(V(my_graph))
   # Type <- as.factor(grp)
 
-  p1 <- ggraph(my_graph, layout="circle")+
+  p1 <- ggraph::ggraph(my_graph, layout="circle")+
     geom_edge_arc(arrow = arrow(length = unit(2.3, 'mm')),
                   start_cap = circle(2.3, 'mm'),
                   end_cap = circle(2, 'mm'),
@@ -34,14 +42,20 @@ nice_DAG_plot <- function(my_graph, print_direct=TRUE){
 }
 
 
-# define useful function
-plot_clusters <- function(german_clusters){
+#' @title plot_clusters
+#'
+#' @description Plot clusters
+#'
+#' @param cluster_results Cluster results
+#'
+#' @export
+plot_clusters <- function(cluster_results){
   # plot DAGs of each cluster
   p_list <- list()
-  k_clust <- length(german_clusters$DAGs)
+  k_clust <- length(cluster_results$DAGs)
   for (ii in 1:k_clust){
-    my_graph <- igraph::graph_from_adjacency_matrix(german_clusters$DAGs[ii][[1]], mode="directed")
+    my_graph <- igraph::graph_from_adjacency_matrix(cluster_results$DAGs[ii][[1]], mode="directed")
     p_list[[ii]] <- nice_DAG_plot(my_graph, print_direct=FALSE)
   }
-  ggarrange(plotlist=p_list, labels = paste("Cluster", LETTERS[1:k_clust]))#, ncol = 2, nrow = 2)
+  ggpubr::ggarrange(plotlist=p_list, labels = paste("Cluster", LETTERS[1:k_clust]))#, ncol = 2, nrow = 2)
 }

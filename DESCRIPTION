@@ -21,4 +21,8 @@ Imports:
     pcalg,
     RBGL,
     clue,
-    grDevices
+    grDevices,
+    igraph,
+    graph,
+    ggraph,
+    ggpubr

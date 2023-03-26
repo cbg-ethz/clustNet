@@ -16,11 +16,15 @@ sampleData(
 \arguments{
 \item{k_clust}{Number of clusters}
 
-\item{Nvars}{Number of variables}
+\item{n_vars}{Number of variables}
 
-\item{sseed}{Seed}
+\item{n_bg}{number of conditioned covariates}
 
-\item{samplesizes}{Sample sizes}
+\item{n_samples}{number of samples}
+
+\item{bgedges}{type of background edges}
+
+\item{equal_cpt_bg}{specify if conditional probability table of the background edges is constant across clusters}
 }
 \value{
 sampled binary data
