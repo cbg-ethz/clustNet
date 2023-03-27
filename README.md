@@ -52,10 +52,10 @@ library(ggraph)
 library(igraph)
 library(ggpubr)
 
-graphClust:::plot_clusters(cluster_res_t)
+graphClust::plot_clusters(cluster_res_t)
 
 # Visualize a single network
 my_graph <- igraph::graph_from_adjacency_matrix(cluster_res_t$DAGs[[1]], mode="directed")
-graphClust:::nice_DAG_plot(my_graph)
+graphClust::nice_DAG_plot(my_graph)
 
 ```

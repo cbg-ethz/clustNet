@@ -18,7 +18,7 @@ nice_DAG_plot <- function(my_graph, print_direct=TRUE){
   name <- names(V(my_graph))
   # Type <- as.factor(grp)
 
-  p1 <- ggraph::ggraph(my_graph, layout="circle")+
+  p1 <- ggraph(my_graph, layout="circle")+
     geom_edge_arc(arrow = arrow(length = unit(2.3, 'mm')),
                   start_cap = circle(2.3, 'mm'),
                   end_cap = circle(2, 'mm'),
@@ -54,8 +54,8 @@ plot_clusters <- function(cluster_results){
   p_list <- list()
   k_clust <- length(cluster_results$DAGs)
   for (ii in 1:k_clust){
-    my_graph <- igraph::graph_from_adjacency_matrix(cluster_results$DAGs[ii][[1]], mode="directed")
+    my_graph <- graph_from_adjacency_matrix(cluster_results$DAGs[ii][[1]], mode="directed")
     p_list[[ii]] <- nice_DAG_plot(my_graph, print_direct=FALSE)
   }
-  ggpubr::ggarrange(plotlist=p_list, labels = paste("Cluster", LETTERS[1:k_clust]))#, ncol = 2, nrow = 2)
+  ggarrange(plotlist=p_list, labels = paste("Cluster", LETTERS[1:k_clust]))#, ncol = 2, nrow = 2)
 }
