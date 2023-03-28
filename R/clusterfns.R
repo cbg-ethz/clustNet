@@ -404,9 +404,9 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
   if(EMn>1){
     bestSeed <- getBestSeed(assignprogress)
     newallrelativeprobabs <- probs[[bestSeed]]
-    assignprogress <- assignprogress[[bestSeed]]
+    assignprogress <- assignprogress[[bestSeed]][[1]]
     clustercenters <- all_clustercenters[[bestSeed]]
-    newclustermembership <- newclustermembership[[bestSeed]]
+    newclustermembership <- newclustermembership[[bestSeed]][[1]]
     names(newclustermembership) <- rownames(myData)
     print(paste0("Best seed: ", bestSeed))
   }
