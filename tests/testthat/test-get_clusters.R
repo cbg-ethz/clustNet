@@ -6,7 +6,7 @@ myData <- matrix(sample(0:1, n_samples * n_variables, replace = TRUE), ncol = n_
 
 # Test basic functionality
 test_that("get_clusters returns a list with the expected elements", {
-  result <- get_clusters(myData)
+  result <- get_clusters(myData, k_clust = 2)
   expect_type(result, "list")
   expect_true("clustermembership" %in% names(result))
   expect_true("assignprogress" %in% names(result))
@@ -16,7 +16,7 @@ test_that("get_clusters returns a list with the expected elements", {
 
 # Test basic functionality
 test_that("get_clusters returns a list with the expected elements", {
-  result <- get_clusters(myData, EMseeds = 1)
+  result <- get_clusters(myData, k_clust = 2, EMseeds = 1)
   expect_type(result, "list")
   expect_true("clustermembership" %in% names(result))
   expect_true("assignprogress" %in% names(result))
@@ -27,18 +27,18 @@ test_that("get_clusters returns a list with the expected elements", {
 
 # Test that the returned object has the expected dimensions
 test_that("get_clusters returns objects with the expected dimensions", {
-  result <- get_clusters(myData, k_clust = 3)
+  result <- get_clusters(myData, k_clust = 2)
   expect_equal(length(result$clustermembership), n_samples)
-  expect_equal(length(result$DAGs), 3)
-  expect_equal(dim(result$probs), c(n_samples, 3))
+  expect_equal(length(result$DAGs), 2)
+  expect_equal(dim(result$probs), c(n_samples, 2))
 })
 
 # Test that the returned object has the expected dimensions
 test_that("get_clusters returns objects with the expected dimensions", {
-  result <- get_clusters(myData, k_clust = 3, EMseeds = 1)
+  result <- get_clusters(myData, k_clust = 2, EMseeds = 1)
   expect_equal(length(result$clustermembership), n_samples)
-  expect_equal(length(result$DAGs), 3)
-  expect_equal(dim(result$probs), c(n_samples, 3))
+  expect_equal(length(result$DAGs), 2)
+  expect_equal(dim(result$probs), c(n_samples, 2))
 })
 
 # Test that the function can handle missing inputs

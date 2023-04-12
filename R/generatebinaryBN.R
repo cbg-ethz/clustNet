@@ -163,6 +163,7 @@ generateBNs <- function(k_clust, n_vars, n_bg, bgedges="different", equal_cpt_bg
   # simulate k_clust Bayesian networks with n_vars variables and n_bg background variables
 
   # set.seed(sseed)
+  sseed <- 1
 
   #generate 3 power-law networks each with 20 nodes
   BNs<-list()
@@ -374,32 +375,49 @@ sampleData <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_samples = NULL, bge
               n_samples=n_samples))
 }
 
-max_match <- function(membership1, membership2){
-  # find permutation with maximal match of assignment
+# max_match <- function(membership1, membership2){
+#   # find permutation with maximal match of assignment
+#
+#   permutations <- permn(1:n_bg)
+#
+#   n_matches <- c()
+#   for (dd in 1:length(permutations)){
+#
+#     temp_perm <- permutations[[dd]]
+#
+#     perm_membership <- membership1
+#     for (bb in 1:k_clust){
+#       perm_membership <- replace(perm_membership, perm_membership==bb,temp_perm[bb]+n_bg)
+#     }
+#     perm_membership <- perm_membership-n_bg
+#
+#     n_matches[dd] <- sum(membership2==perm_membership)
+#   }
+#
+#   temp_var <- which.max(n_matches)
+#
+#   permutations[temp_var]
+#
+#   return(max(n_matches))
+# }
 
-  permutations <- permn(1:n_bg)
-
-  n_matches <- c()
-  for (dd in 1:length(permutations)){
-
-    temp_perm <- permutations[[dd]]
-
-    perm_membership <- membership1
-    for (bb in 1:k_clust){
-      perm_membership <- replace(perm_membership, perm_membership==bb,temp_perm[bb]+n_bg)
-    }
-    perm_membership <- perm_membership-n_bg
-
-    n_matches[dd] <- sum(membership2==perm_membership)
-  }
-
-  temp_var <- which.max(n_matches)
-
-  permutations[temp_var]
-
-  return(max(n_matches))
+adjustedRandIndex <- function(x, y){
+  # taken from the mclust package
+  x <- as.vector(x)
+  y <- as.vector(y)
+  if (length(x) != length(y))
+    stop("arguments must be vectors of the same length")
+  tab <- table(x, y)
+  if (all(dim(tab) == c(1, 1)))
+    return(1)
+  a <- sum(choose(tab, 2))
+  b <- sum(choose(rowSums(tab), 2)) - a
+  c <- sum(choose(colSums(tab), 2)) - a
+  d <- choose(sum(tab), 2) - a - b - c
+  ARI <- (a - (a + b) * (a + c)/(a + b + c + d))/((a + b +
+                                                     a + c)/2 - (a + b) * (a + c)/(a + b + c + d))
+  return(ARI)
 }
-
 
 cluster_benchmark <- function(sampled_data, sampled_membership, k_clust = 3, n_bg = 3, n_vars = 20, n_rep = 10){
 
@@ -428,20 +446,20 @@ cluster_benchmark <- function(sampled_data, sampled_membership, k_clust = 3, n_b
     correct_samples3 <- adjustedRandIndex(sampled_membership, cluster_results3$clustermembership)
 
     ## k-means
-    res_kmeans1 <- kmeans(sampled_data, k_clust)
+    res_kmeans1 <- stats::kmeans(sampled_data, k_clust)
     # correct_samples4 <- max_match(sampled_membership, res_kmeans1$cluster)
     correct_samples4 <- adjustedRandIndex(sampled_membership, res_kmeans1$cluster)
 
-    res_kmeans2 <- kmeans(reduced_data, k_clust)
+    res_kmeans2 <- stats::kmeans(reduced_data, k_clust)
     # correct_samples5 <- max_match(sampled_membership, res_kmeans2$cluster)
     correct_samples5 <- adjustedRandIndex(sampled_membership, res_kmeans2$cluster)
 
     ## Mclust
-    res_mclust1 <- kmeans(sampled_data, k_clust)
+    res_mclust1 <- stats::kmeans(sampled_data, k_clust)
     # correct_samples6 <- max_match(sampled_membership, res_mclust1$classification)
     correct_samples6 <- adjustedRandIndex(sampled_membership, res_mclust1$cluster)
 
-    res_mclust2 <- kmeans(reduced_data, k_clust)
+    res_mclust2 <- stats::kmeans(reduced_data, k_clust)
     # correct_samples7 <- max_match(sampled_membership, res_mclust2$classification)
     correct_samples7 <- adjustedRandIndex(sampled_membership, res_mclust2$cluster)
 

@@ -7,6 +7,9 @@
 #' @param print_direct print DAG if TRUE
 #'
 #' @export
+#'
+#' @importFrom ggraph ggraph geom_edge_arc geom_node_point geom_node_text circle
+#' @importFrom igraph V
 nice_DAG_plot <- function(my_graph, print_direct=TRUE){
 
   # add labelling
@@ -15,7 +18,7 @@ nice_DAG_plot <- function(my_graph, print_direct=TRUE){
   angle= 360 * (id-0.5) /number_of_bar     # I substract 0.5 because the letter must have the angle of the center of the bars. Not extreme right(1) or extreme left (0)
   hjust <- ifelse(angle > 90 & angle<270, 1, 0)
   angle <- ifelse(angle > 90 & angle<270, angle+180, angle)
-  name <- names(V(my_graph))
+  name <- names(igraph::V(my_graph))
   # Type <- as.factor(grp)
 
   p1 <- ggraph(my_graph, layout="circle")+
@@ -49,12 +52,15 @@ nice_DAG_plot <- function(my_graph, print_direct=TRUE){
 #' @param cluster_results Cluster results
 #'
 #' @export
+#' @importFrom igraph graph_from_adjacency_matrix
+#' @importFrom ggpubr ggarrange
 plot_clusters <- function(cluster_results){
   # plot DAGs of each cluster
   p_list <- list()
   k_clust <- length(cluster_results$DAGs)
   for (ii in 1:k_clust){
     my_graph <- graph_from_adjacency_matrix(cluster_results$DAGs[ii][[1]], mode="directed")
+    # my_graph <- igraph::graph_from_adjacency_matrix(cluster_results$DAGs[ii][[1]], mode="directed")
     p_list[[ii]] <- nice_DAG_plot(my_graph, print_direct=FALSE)
   }
   ggarrange(plotlist=p_list, labels = paste("Cluster", LETTERS[1:k_clust]))#, ncol = 2, nrow = 2)

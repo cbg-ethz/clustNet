@@ -42,6 +42,8 @@
 #' myData<-pcalg::rmvDAG(200, myDAG)
 #' myScore<-scoreparameters("bge", myData)
 #'@export
+#'
+#' @importFrom stats cov cov.wt
 # a constructor function for the "scoreparameters" class
 scoreparameters <- function(scoretype=c("bge","bde","bdecat","usr"), data,
                           bgepar=list(am=1, aw=NULL),
@@ -420,10 +422,10 @@ scoreparameters <- function(scoretype=c("bge","bde","bdecat","usr"), data,
       initparam$Cvec <- bdecatpar$bdecatCvec
     }
 
-  } else if (scoretype=="usr"){
-    if(is.null(usrpar$pctesttype)){usrpar$pctesttype <- "usr"}
-    initparam$pctesttype <- usrpar$pctesttype
-    initparam <- usrscoreparameters(initparam, usrpar)
+  # } else if (scoretype=="usr"){
+  #   if(is.null(usrpar$pctesttype)){usrpar$pctesttype <- "usr"}
+  #   initparam$pctesttype <- usrpar$pctesttype
+  #   initparam <- usrscoreparameters(initparam, usrpar)
   }
   attr(initparam, "class") <- "scoreparameters"
   return(initparam)

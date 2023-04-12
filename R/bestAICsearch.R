@@ -144,6 +144,9 @@ bestAICsearch_test <- function(binaryMatrix, minK = 2, maxK=5, chiVec=c(1e-3,0.5
   #     require('ggplot2')
   #     require('reshape2')
 
+  # the following line is to suppress irrelevant notes caused by ggplot
+  Var1=Var2=value=aic=0
+
   ### Check input parameters
   if(missing(maxK)) stop("Need to input maximum number of clusters k.")
   if(missing(chiVec)) stop("Need to input a range of chi values.")
