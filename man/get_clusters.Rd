@@ -12,7 +12,7 @@ get_clusters(
   EMseeds = 1:3,
   edgepmat = NULL,
   blacklist = NULL,
-  bdepar = list(chi = 0.5, edgepf = 16),
+  bdepar = list(chi = 0.5, edgepf = 8),
   newallrelativeprobabs = NULL
 )
 }
