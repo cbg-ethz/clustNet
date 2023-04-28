@@ -4,7 +4,7 @@
 \alias{plot_clusters}
 \title{plot_clusters}
 \usage{
-plot_clusters(cluster_results)
+plot_clusters(cluster_results, data = NULL)
 }
 \arguments{
 \item{cluster_results}{Cluster results}

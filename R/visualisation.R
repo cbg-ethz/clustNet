@@ -5,16 +5,27 @@
 #'
 #' @param my_graph DAG
 #' @param print_direct print DAG if TRUE
+#' @param node_size node size vector
+#' @param CPDAG if TRUE, then plot CPDAG instead of DAG
 #'
 #' @export
 #'
 #' @importFrom ggraph ggraph geom_edge_arc geom_node_point geom_node_text circle
 #' @importFrom igraph V
-nice_DAG_plot <- function(my_graph, print_direct=TRUE, node_size=NULL){
+nice_DAG_plot <- function(my_DAG, print_direct=TRUE, node_size=NULL, CPDAG=TRUE){
 
+  # set node size if not specified
   if(is.null(node_size)){
     node_size <- 3.5
   }
+
+  # Transform the DAG to a CPDAG for a given variable selection
+  if(CPDAG==TRUE){
+    temp_var_selection <- 1:dim(my_DAG)[1]
+    my_DAG[temp_var_selection,temp_var_selection] <- as(pcalg::dag2cpdag(as(my_DAG[temp_var_selection,temp_var_selection], "graphNEL")), "matrix")
+  }
+
+  my_graph <- igraph::graph_from_adjacency_matrix(my_DAG, mode="directed")
 
   # add labelling
   number_of_bar=length(my_graph)
@@ -55,6 +66,7 @@ nice_DAG_plot <- function(my_graph, print_direct=TRUE, node_size=NULL){
 #' @description Plot clusters
 #'
 #' @param cluster_results Cluster results
+#' @param data data
 #'
 #' @export
 #' @importFrom igraph graph_from_adjacency_matrix
@@ -96,9 +108,10 @@ plot_clusters <- function(cluster_results, data=NULL){
   p_list <- list()
   k_clust <- length(cluster_results$DAGs)
   for (ii in 1:k_clust){
-    my_graph <- graph_from_adjacency_matrix(cluster_results$DAGs[ii][[1]], mode="directed")
+    # my_graph <- graph_from_adjacency_matrix(cluster_results$DAGs[ii][[1]], mode="directed")
+    my_DAG <- cluster_results$DAGs[ii][[1]]
     # my_graph <- igraph::graph_from_adjacency_matrix(cluster_results$DAGs[ii][[1]], mode="directed")
-    p_list[[ii]] <- nice_DAG_plot(my_graph, print_direct=FALSE, node_size=node_size[ii,])
+    p_list[[ii]] <- nice_DAG_plot(my_DAG, print_direct=FALSE, node_size=node_size[ii,])
   }
   ggarrange(plotlist=p_list, labels = paste("Cluster", LETTERS[1:k_clust]))#, ncol = 2, nrow = 2)
 }

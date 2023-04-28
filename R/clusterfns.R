@@ -424,7 +424,7 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
 
   print(paste0("Computation time: ",round(as.numeric(difftime(end_time, start_time, units='mins')), digits = 2), " mins"))
 
-  return(list("clustermembership"=newclustermembership,"assignprogress"=assignprogress, "DAGs"=clustercenters, "probs"=newallrelativeprobabs))
+  return(list("clustermembership"=newclustermembership,"assignprogress"=assignprogress, "DAGs"=clustercenters, "probs"=newallrelativeprobabs, "data"=myData))
 }
 
 
