@@ -8,6 +8,8 @@ plot_clusters(cluster_results, data = NULL)
 }
 \arguments{
 \item{cluster_results}{Cluster results}
+
+\item{data}{data}
 }
 \description{
 Plot clusters

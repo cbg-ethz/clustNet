@@ -7,13 +7,13 @@
 nice_DAG_plot(my_DAG, print_direct = TRUE, node_size = NULL, CPDAG = TRUE)
 }
 \arguments{
+\item{my_DAG}{DAG}
+
 \item{print_direct}{print DAG if TRUE}
 
 \item{node_size}{node size vector}
 
 \item{CPDAG}{if TRUE, then plot CPDAG instead of DAG}
-
-\item{my_graph}{DAG}
 }
 \description{
 DAG visualization

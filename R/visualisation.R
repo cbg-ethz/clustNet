@@ -3,7 +3,7 @@
 #'
 #' @description DAG visualization
 #'
-#' @param my_graph DAG
+#' @param my_DAG DAG
 #' @param print_direct print DAG if TRUE
 #' @param node_size node size vector
 #' @param CPDAG if TRUE, then plot CPDAG instead of DAG
