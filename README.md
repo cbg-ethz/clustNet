@@ -42,7 +42,7 @@ sampled_data <- simulation_data$sampled_data
 # Network-based clustering
 cluster_res <- get_clusters(sampled_data, k_clust = k_clust)
 
-# Calculate the AIC 
+# Calculate the ARI 
 library(mclust)
 adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
 
