@@ -4,7 +4,13 @@
 \alias{nice_DAG_plot}
 \title{nice_DAG_plot}
 \usage{
-nice_DAG_plot(my_DAG, print_direct = TRUE, node_size = NULL, CPDAG = TRUE)
+nice_DAG_plot(
+  my_DAG,
+  print_direct = TRUE,
+  node_size = NULL,
+  CPDAG = TRUE,
+  node_colours = "#fdae61"
+)
 }
 \arguments{
 \item{my_DAG}{DAG}
@@ -14,6 +20,8 @@ nice_DAG_plot(my_DAG, print_direct = TRUE, node_size = NULL, CPDAG = TRUE)
 \item{node_size}{node size vector}
 
 \item{CPDAG}{if TRUE, then plot CPDAG instead of DAG}
+
+\item{node_colours}{node colours}
 }
 \description{
 DAG visualization

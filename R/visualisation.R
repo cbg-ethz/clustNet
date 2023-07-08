@@ -7,12 +7,13 @@
 #' @param print_direct print DAG if TRUE
 #' @param node_size node size vector
 #' @param CPDAG if TRUE, then plot CPDAG instead of DAG
+#' @param node_colours node colours
 #'
 #' @export
 #'
 #' @importFrom ggraph ggraph geom_edge_arc geom_node_point geom_node_text circle
 #' @importFrom igraph V
-nice_DAG_plot <- function(my_DAG, print_direct=TRUE, node_size=NULL, CPDAG=TRUE){
+nice_DAG_plot <- function(my_DAG, print_direct=TRUE, node_size=NULL, CPDAG=TRUE, node_colours="#fdae61"){
 
   # set node size if not specified
   if(is.null(node_size)){
@@ -41,7 +42,7 @@ nice_DAG_plot <- function(my_DAG, print_direct=TRUE, node_size=NULL, CPDAG=TRUE)
                   start_cap = circle(2.3, 'mm'),
                   end_cap = circle(2, 'mm'),
                   edge_colour="black", edge_alpha=0.6, edge_width=0.4, aes(circular=TRUE)) +
-    geom_node_point(size=node_size, color="#fdae61", alpha=0.9) +
+    geom_node_point(size=node_size, color=node_colours, alpha=0.9) +
     geom_node_text(aes(label=paste("    ",name,"    "),
                        angle=angle, hjust=hjust), size=2.3, color="black") +
     theme_void() +
@@ -67,11 +68,12 @@ nice_DAG_plot <- function(my_DAG, print_direct=TRUE, node_size=NULL, CPDAG=TRUE)
 #'
 #' @param cluster_results Cluster results
 #' @param data data
+#' @param node_colours node colours
 #'
 #' @export
 #' @importFrom igraph graph_from_adjacency_matrix
 #' @importFrom ggpubr ggarrange
-plot_clusters <- function(cluster_results, data=NULL){
+plot_clusters <- function(cluster_results, data=NULL, node_colours="#fdae61"){
 
   node_size <- NULL
   # if entropy should define the size

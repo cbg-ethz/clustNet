@@ -4,12 +4,14 @@
 \alias{plot_clusters}
 \title{plot_clusters}
 \usage{
-plot_clusters(cluster_results, data = NULL)
+plot_clusters(cluster_results, data = NULL, node_colours = "#fdae61")
 }
 \arguments{
 \item{cluster_results}{Cluster results}
 
 \item{data}{data}
+
+\item{node_colours}{node colours}
 }
 \description{
 Plot clusters
