@@ -4,7 +4,12 @@
 \alias{plot_clusters}
 \title{plot_clusters}
 \usage{
-plot_clusters(cluster_results, data = NULL, node_colours = "#fdae61")
+plot_clusters(
+  cluster_results,
+  data = NULL,
+  node_colours = "#fdae61",
+  binary_cols = TRUE
+)
 }
 \arguments{
 \item{cluster_results}{Cluster results}
@@ -12,6 +17,8 @@ plot_clusters(cluster_results, data = NULL, node_colours = "#fdae61")
 \item{data}{data}
 
 \item{node_colours}{node colours}
+
+\item{binary_cols}{Input can be a vector of the binary variables; if "TRUE", the binary variables are automatically determined; if NULL, then entropy will be used only}
 }
 \description{
 Plot clusters
