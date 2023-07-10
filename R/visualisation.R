@@ -92,7 +92,7 @@ plot_clusters <- function(cluster_results, data=NULL, node_colours="#fdae61", bi
     k_clust <- length(cluster_results$DAGs)
     
     # calculate overall entropy
-    total_entropies <- sapply(mut_cov_data, function(x) entropy(x))
+    total_entropies <- sapply(data, function(x) entropy(x))
     # calculate relative entropy and select variables with the lowest entropy
     all_var_selected <- c()
     diff_entropies <- matrix(NA, nrow = k_clust, ncol = ncol(data))
@@ -115,15 +115,15 @@ plot_clusters <- function(cluster_results, data=NULL, node_colours="#fdae61", bi
     node_size <- 1.5+node_size_percentage*6
     
     # calculate overall entropy
-    total_entropies <- sapply(mut_cov_data, function(x) entropy(x))
+    total_entropies <- sapply(data, function(x) entropy(x))
     # calculate relative entropy and select variables with the lowest entropy
     n_net <- 7 # number of selected variables per cluster
     all_var_selected <- c()
-    diff_entropies <- matrix(NA, nrow = k_clust, ncol = ncol(mut_cov_data))
-    binary_frequency <- matrix(NA, nrow = k_clust, ncol = ncol(mut_cov_data))
+    diff_entropies <- matrix(NA, nrow = k_clust, ncol = ncol(data))
+    binary_frequency <- matrix(NA, nrow = k_clust, ncol = ncol(data))
     for (nn in 1:k_clust){
       # select data
-      cluster_data <- mut_cov_data[cluster_results$clustermembership==nn,]
+      cluster_data <- data[cluster_results$clustermembership==nn,]
       # calculate entropy in clusters
       cluster_entropies <- sapply(cluster_data, function(x) entropy(x))
       # calculate relative entropy
@@ -193,7 +193,7 @@ plot_clusters <- function(cluster_results, data=NULL, node_colours="#fdae61", bi
 #     # n_net <- 1
 #     # top_entropy <- list()
 #     # calculate overall entropy
-#     total_entropies <- sapply(mut_cov_data, function(x) entropy(x))
+#     total_entropies <- sapply(data, function(x) entropy(x))
 #     # calculate relative entropy and select variables with the lowest entropy
 #     all_var_selected <- c()
 #     diff_entropies <- matrix(NA, nrow = k_clust, ncol = ncol(data))
