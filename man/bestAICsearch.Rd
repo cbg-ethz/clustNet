@@ -11,7 +11,8 @@ bestAICsearch(
   chiVec = c(0.001, 0.5, 1, 2, 3),
   startseed = 100,
   nIterations = 50,
-  AICrange = 100
+  AICrange = 100,
+  plot_heatmap = TRUE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ bestAICsearch(
 \item{nIterations}{Number of iterations}
 
 \item{AICrange}{AIC range}
+
+\item{plot_heatmap}{TRUE if plotting directly}
 }
 \value{
 list of AIC scrores
