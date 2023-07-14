@@ -19,12 +19,10 @@ tool from an R session:
 
 ```{r eval=FALSE}
 library("devtools")
-install_github("fritzbayer/graphClust", auth_token="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")
+install_github("fritzbayer/graphClust")
 ```
 
-`graphClust` requires R `>= 3.5`, and depends on 
-`BiDAG` (>= 2.0.2), `reshape2`, `pcalg`,
-`RBGL`, `clue` and `grDevices`.
+`graphClust` requires R `>= 3.5`.
 
 
 Example
