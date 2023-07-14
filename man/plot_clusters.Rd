@@ -8,7 +8,8 @@ plot_clusters(
   cluster_results,
   data = NULL,
   node_colours = "#fdae61",
-  binary_cols = TRUE
+  binary_cols = TRUE,
+  directed = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ plot_clusters(
 \item{node_colours}{node colours}
 
 \item{binary_cols}{Input can be a vector of the binary variables; if "TRUE", the binary variables are automatically determined; if NULL, then entropy will be used only}
+
+\item{directed}{TRUE if nodes should be directed}
 }
 \description{
 Plot clusters

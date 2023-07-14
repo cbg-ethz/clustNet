@@ -14,14 +14,25 @@
 #' @return list of AIC scrores
 #' @export
 #'
-#' @import ggplot2
-#' @importFrom reshape2 melt
-#' @importFrom grDevices rgb
+# #' @import ggplot2
+# #' @importFrom reshape2 melt
+# #' @importFrom grDevices rgb
 #'
 bestAICsearch <- function(binaryMatrix, minK = 2, maxK = 5, chiVec = c(1e-3,0.5,1,2,3), startseed = 100, nIterations = 50, AICrange = 100, plot_heatmap=TRUE) {
-  #
-  #     require('ggplot2')
-  #     require('reshape2')
+  
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop(
+      "Package \"ggplot2\" must be installed to use this function.",
+      call. = FALSE
+    )
+  }
+  
+  if (!requireNamespace("reshape2", quietly = TRUE)) {
+    stop(
+      "Package \"reshape2\" must be installed to use this function.",
+      call. = FALSE
+    )
+  }
 
   # the following line is to suppress irrelevant notes caused by ggplot
   Var1=Var2=value=aic=0
@@ -81,44 +92,44 @@ bestAICsearch <- function(binaryMatrix, minK = 2, maxK = 5, chiVec = c(1e-3,0.5,
   rownames(divergy)<-chiVec
   colnames(divergy)<-c(minK:maxK)
 
-  meltdivergy<-melt(divergy)
+  meltdivergy<-reshape2::melt(divergy)
 
   if (plot_heatmap==TRUE){
-    ggplot(data = meltdivergy, aes(x=Var1, y=Var2, fill=value)) +
-       geom_tile()
+    ggplot2::ggplot(data = meltdivergy, ggplot2::aes(x=Var1, y=Var2, fill=value)) +
+      ggplot2::geom_tile()
 
     middycol<-c(0.8,0.2,0)
 
-    ggheatmap<-ggplot(data = meltdivergy, aes(Var1, Var2, fill = value))+
+    ggheatmap<-ggplot2::ggplot(data = meltdivergy, ggplot2::aes(Var1, Var2, fill = value))+
     # ggheatmap<-ggplot(data = meltdivergy)+
-        geom_tile() +
-        xlab(expression(chi)) +
-        ylab("k") +
-        scale_fill_gradient2(high =rgb(0.98,0.98,1), low = "#117777",
+        ggplot2::geom_tile() +
+        ggplot2::xlab(expression(chi)) +
+        ggplot2::ylab("k") +
+        ggplot2::scale_fill_gradient2(high = "#FAFAFF", low = "#117777",
                              mid="#88BBBB",space="Lab",na.value="grey75",
                              midpoint=topaics/2,limit = c(0,topaics), name="AIC\nchange\n") +
-        scale_y_continuous(breaks=c(minK:maxK)) +
-        theme_minimal() +
-        theme(axis.title.x = element_text(vjust=-1),axis.title.y = element_text(angle=0,hjust=-0.5,vjust=0.505)) +
-        theme(axis.text.x = element_text(angle = 0, vjust = 0.5,size = 20, hjust = 0.6),
-              axis.text.y = element_text(angle = 0, vjust = 0.5,size = 20, hjust = 1),
-              legend.text=element_text(size=20),
-              axis.title=element_text(size=30),
-              legend.title=element_text(size=24))+theme(legend.key.size = unit(2,"line")) +
-        theme(plot.margin=unit(c(-0.3,-0.3,0.4,0.4),"cm"))
+        ggplot2::scale_y_continuous(breaks=c(minK:maxK)) +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(axis.title.x = ggplot2::element_text(vjust=-1),axis.title.y = ggplot2::element_text(angle=0,hjust=-0.5,vjust=0.505)) +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 0, vjust = 0.5,size = 20, hjust = 0.6),
+              axis.text.y = ggplot2::element_text(angle = 0, vjust = 0.5,size = 20, hjust = 1),
+              legend.text=ggplot2::element_text(size=20),
+              axis.title=ggplot2::element_text(size=30),
+              legend.title=ggplot2::element_text(size=24))+ggplot2::theme(legend.key.size = ggplot2::unit(2,"line")) +
+        ggplot2::theme(plot.margin=ggplot2::unit(c(-0.3,-0.3,0.4,0.4),"cm"))
 
     print(ggheatmap)
 
     # pdf(paste("heatmapaic.pdf",sep=""), width=7.5, height=6, onefile=F, pointsize=10,  paper="special")
 
     ggheatmap +
-        theme(
+        ggplot2::theme(
             #axis.title.x = element_text("prune and reattach probability"),
             #axis.title.y = element_text("swap two nodes probability"),
-            panel.grid.major = element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank(),
-            axis.ticks = element_blank())
+            panel.grid.major = ggplot2::element_blank(),
+            panel.border = ggplot2::element_blank(),
+            panel.background = ggplot2::element_blank(),
+            axis.ticks = ggplot2::element_blank())
   }
 
   # dev.off()

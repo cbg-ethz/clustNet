@@ -9,7 +9,8 @@ nice_DAG_plot(
   print_direct = TRUE,
   node_size = NULL,
   CPDAG = TRUE,
-  node_colours = "#fdae61"
+  node_colours = "#fdae61",
+  directed = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ nice_DAG_plot(
 \item{CPDAG}{if TRUE, then plot CPDAG instead of DAG}
 
 \item{node_colours}{node colours}
+
+\item{directed}{TRUE if nodes should be directed}
 }
 \description{
 DAG visualization

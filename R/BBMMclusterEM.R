@@ -362,8 +362,8 @@ BMMclusterEMcore <- function(k_clust, chi, datatocluster){
       # categorical version: this part inserts an empty graph to the scoreagainstDAG function
       bdepar=list(chi = chi, edgepf = 16)
       clustercenters <- matrix(0, nrow = nbig, ncol = nbig) # empty graph
-      scorepar <- scoreparameters("bdecat", datatocluster, weightvector = relativeweights[,kk], bdepar = bdepar)
-      scoresagainstclusters[,kk] <- scoreagainstDAG(scorepar,clustercenters)
+      scorepar <- BiDAG::scoreparameters("bdecat", as.data.frame(datatocluster), weightvector = relativeweights[,kk], bdepar = bdepar)
+      scoresagainstclusters[,kk] <- BiDAG::scoreagainstDAG(scorepar,clustercenters, bdecatCvec = apply(datatocluster, 2, function(x) length(unique(x))))
     }
 
     # now we can update the weights
@@ -413,8 +413,8 @@ scoreagainstemptyEMcluster <- function(k_clust, chi, relativeweights, tauvec, da
         # categorical version: this part inserts an empty graph to the scoreagainstDAG function
         bdepar=list(chi = chi, edgepf = 16)
         clustercenters <- matrix(0, nrow = nbig, ncol = nbig) # empty graph
-        scorepar <- scoreparameters("bdecat", datatocluster, weightvector = relativeweights[,kk], bdepar = bdepar)
-        scoresagainstclusters[,kk] <- scoreagainstDAG(scorepar,clustercenters)
+        scorepar <- BiDAG::scoreparameters("bdecat", as.data.frame(datatocluster), weightvector = relativeweights[,kk], bdepar = bdepar)
+        scoresagainstclusters[,kk] <- BiDAG::scoreagainstDAG(scorepar,clustercenters)
     }
 
     # calculate the weights

@@ -323,11 +323,11 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
         #define score parameters
         if (n_bg>0){
           # apply different scores for categorical / binary data
-          scorepar <- scoreparameters(score_type, myData, edgepmat = edgepmat,
+          scorepar <- BiDAG::scoreparameters(score_type, as.data.frame(myData), edgepmat = edgepmat,
                                            weightvector=allrelativeprobabs[,k],
                                            bdepar=bdepar, bgnodes=(n+1):(n+n_bg))
         }else{
-          scorepar <- scoreparameters(score_type, myData, edgepmat = edgepmat,
+          scorepar <- BiDAG::scoreparameters(score_type, as.data.frame(myData), edgepmat = edgepmat,
                                            weightvector=allrelativeprobabs[,k],
                                            bdepar=bdepar)
         }
@@ -351,16 +351,24 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
 
         parRes <- parallel::mclapply(1:k_clust, function(k) {
           if (n_bg>0){
-            scorepar <- scoreparameters(score_type,as.data.frame(myData), edgepmat = edgepmat,
+            scorepar <- BiDAG::scoreparameters(score_type,as.data.frame(myData), edgepmat = edgepmat,
                                              weightvector=allrelativeprobabs[,k],
                                              bdepar=bdepar, bgnodes=(n+1):(n+n_bg))
           }else{
-            scorepar <- scoreparameters(score_type,as.data.frame(myData), edgepmat = edgepmat,
+            scorepar <- BiDAG::scoreparameters(score_type,as.data.frame(myData), edgepmat = edgepmat,
                                              weightvector=allrelativeprobabs[,k],
                                              bdepar=bdepar)
           }
+
           scorepar$n <- n # to avoid to scoring over background nodes
-          scoresagainstclusters[,k] <- scoreagainstDAG(scorepar,clustercenters[[k]])
+          # scoresagainstclusters[,k] <- BiDAG::scoreagainstDAGscoreagainstDAG(scorepar,clustercenters[[k]])
+          
+          if (score_type=="bdecat"){
+            scoresagainstclusters[,k] <- BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]], bdecatCvec = apply(myData, 2, function(x) length(unique(x))))
+          }else{
+            scoresagainstclusters[,k] <- BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]])
+          }
+          
           scorepar$n <- n+n_bg # recet after scoring
 
           return(scoresagainstclusters[,k])
