@@ -26,6 +26,7 @@ Imports:
     BiDAG (>= 2.0.2),
     pcalg,
     RBGL,
+    parallel,
     clue,
     methods,
     graph,
