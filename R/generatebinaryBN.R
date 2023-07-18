@@ -480,7 +480,7 @@ cluster_benchmark <- function(sampled_data, sampled_membership, k_clust = 3, n_b
   }
 
   # label output
-  colnames(correct_samples) <- c("Cov-Adjust", "graphClust (cov & var)", "graphClust (var)",
+  colnames(correct_samples) <- c("Cov-Adjust", "BNMM (cov & var)", "BNMM (var)",
                                  "kmeans (cov & var)", "kmeans (var)", "Mclust (cov & var)",
                                  "Mclust (var)", "BMM (cov & var)", "BMM (var)")
 
@@ -513,7 +513,7 @@ benchmark_methods <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_it = 10, n_s
                                                          n_bg = n_bg, n_vars = n_vars, n_rep = 1)
   }
 
-  colnames(correct_samples) <- c("Cov-Adjust", "graphClust (cov & var)", "graphClust (var)",
+  colnames(correct_samples) <- c("Cov-Adjust", "BNMM (cov & var)", "BNMM (var)",
                                  "kmeans (cov & var)", "kmeans (var)", "Mclust (cov & var)",
                                  "Mclust (var)", "BMM (cov & var)", "BMM (var)")
 

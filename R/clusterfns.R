@@ -362,13 +362,13 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
 
           scorepar$n <- n # to avoid to scoring over background nodes
           # scoresagainstclusters[,k] <- BiDAG::scoreagainstDAGscoreagainstDAG(scorepar,clustercenters[[k]])
-          
+
           if (score_type=="bdecat"){
             scoresagainstclusters[,k] <- BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]], bdecatCvec = apply(myData, 2, function(x) length(unique(x))))
           }else{
             scoresagainstclusters[,k] <- BiDAG::scoreagainstDAG(scorepar,clustercenters[[k]])
           }
-          
+
           scorepar$n <- n+n_bg # recet after scoring
 
           return(scoresagainstclusters[,k])
@@ -641,7 +641,7 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
 # }
 
 
-# #' @title graphClustParallel
+# #' @title clustNetParallel
 # #'
 # #' @description Network-based clustering of multiple seeds using parallel computing
 # #'
@@ -656,7 +656,7 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
 # #' @return a list containing the clusterMemberships, DAGs, best seed and "assignprogress"
 # #' @export
 # #'
-# graphClustParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
+# clustNetParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
 #
 #   # parallel computing of clustering
 #   nSeeds <- length(EMseeds)
@@ -695,7 +695,7 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
 # }
 
 
-# #' @title graphCluster
+# #' @title clustNeter
 # #'
 # #' @description Network-based clustering
 # #'
@@ -710,7 +710,7 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
 # #'
 # #' @return a list containing the clusterMemberships and "assignprogress"
 # #' @export
-# graphCluster <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
+# clustNeter <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
 #
 #   # Binary clustering
 #   startseed <- EMseeds[1]
@@ -890,7 +890,7 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
 # }
 
 
-# #' @title graphClusterParallel
+# #' @title clustNeterParallel
 # #'
 # #' @description Network-based clustering of multiple seeds using parallel computing
 # #'
@@ -906,13 +906,13 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
 # #' @return a list containing the clusterMemberships, DAGs, best seed and "assignprogress"
 # #' @export
 # #'
-# graphClusterParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
+# clustNeterParallel <- function(myData,k_clust=3,n_bg=0,itLim=20, EMseeds=1:5, BBMMClust=TRUE, edgepmat=NULL, bdepar=list(chi = 0.5, edgepf = 16)){
 #
 #   # parallel computing of clustering
 #   nSeeds <- length(EMseeds)
 #   clusterResAll <- parallel::mclapply(1:nSeeds, function(i) {
 #     print(paste("Clustering iteration", i, "of", nSeeds))
-#     clusterRes <- graphCluster(myData=myData,k_clust=k_clust,n_bg=n_bg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat, bdepar=bdepar)
+#     clusterRes <- clustNeter(myData=myData,k_clust=k_clust,n_bg=n_bg,itLim=itLim, EMseeds=EMseeds[i], BBMMClust=BBMMClust, edgepmat=edgepmat, bdepar=bdepar)
 #     return(clusterRes)
 #   }, mc.cores = nSeeds)
 #

@@ -1,4 +1,4 @@
-Package: graphClust
+Package: clustNet
 Type: Package
 Title: Network-Based Clustering
 Version: 1.0.1

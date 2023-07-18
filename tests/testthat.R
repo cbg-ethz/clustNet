@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(graphClust)
+library(clustNet)
 
-test_check("graphClust")
+test_check("clustNet")
