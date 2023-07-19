@@ -167,6 +167,14 @@ getBestSeed <- function(assignprogress){
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
+#' @examples
+#' cluster_results <- get_clusters(BiDAG::Asia[1:2000,])
+#' # visualize the networks
+#' library(ggplot2)
+#' library(ggraph)
+#' library(igraph)
+#' library(ggpubr)
+#' plot_clusters(cluster_results)
 get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edgepmat=NULL, blacklist=NULL, bdepar=list(chi = 0.5, edgepf = 8), newallrelativeprobabs=NULL){
 
   # measure time
@@ -341,7 +349,8 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
 
         return(clustercenters[[k]])
 
-      }, mc.cores = k_clust)
+      # }, mc.cores = k_clust)
+      })
 
       #internal EM cycle, estimating parameters
       for (i in 1:nit.internal) {
@@ -373,7 +382,8 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
 
           return(scoresagainstclusters[,k])
 
-        }, mc.cores = k_clust)
+        # }, mc.cores = k_clust)
+        })
 
         for (kk in 1:k_clust){
           scoresagainstclusters[,kk] <- parRes[[kk]]
