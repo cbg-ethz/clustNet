@@ -115,3 +115,5 @@ euler_cluster/create_scripts.R
 euler_cluster/cluster_script copy.R
 .Rhistory
 .Rhistory
+/doc/
+/Meta/

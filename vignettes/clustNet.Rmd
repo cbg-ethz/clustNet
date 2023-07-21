@@ -1,0 +1,10 @@
+---
+title: "clustNet"
+output: rmarkdown::html_vignette
+description: >
+  Network-based clustering of binary data. Optional adjustment for covariates. 
+vignette: >
+  %\VignetteIndexEntry{clustNet}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---

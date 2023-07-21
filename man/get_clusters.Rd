@@ -42,11 +42,11 @@ a list containing the clusterMemberships and "assignprogress"
 Network-based clustering
 }
 \examples{
-cluster_results <- get_clusters(BiDAG::Asia[1:2000,])
-# visualize the networks
-library(ggplot2)
-library(ggraph)
-library(igraph)
-library(ggpubr)
-plot_clusters(cluster_results)
+# cluster_results <- get_clusters(BiDAG::Asia[1:2000,])
+# # visualize the networks
+# library(ggplot2)
+# library(ggraph)
+# library(igraph)
+# library(ggpubr)
+# plot_clusters(cluster_results)
 }
