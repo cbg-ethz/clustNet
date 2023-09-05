@@ -26,6 +26,9 @@ nice_DAG_plot(
 
 \item{directed}{TRUE if nodes should be directed}
 }
+\value{
+A plot of the DAG of class c("gg", "ggplot").
+}
 \description{
 DAG visualization
 }

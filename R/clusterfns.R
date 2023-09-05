@@ -168,13 +168,18 @@ getBestSeed <- function(assignprogress){
 #' @return a list containing the clusterMemberships and "assignprogress"
 #' @export
 #' @examples
-#' # cluster_results <- get_clusters(BiDAG::Asia[1:2000,])
-#' # # visualize the networks
-#' # library(ggplot2)
-#' # library(ggraph)
-#' # library(igraph)
-#' # library(ggpubr)
-#' # plot_clusters(cluster_results)
+#' \donttest{
+#' # choose data
+#' my_data <- BiDAG::Asia[1:2000,]
+#' # learn clusters
+#' cluster_results <- get_clusters(my_data)
+#' # visualize the networks
+#' library(ggplot2)
+#' library(ggraph)
+#' library(igraph)
+#' library(ggpubr)
+#' plot_clusters(cluster_results)
+#' }
 get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edgepmat=NULL, blacklist=NULL, bdepar=list(chi = 0.5, edgepf = 8), newallrelativeprobabs=NULL){
 
   # measure time

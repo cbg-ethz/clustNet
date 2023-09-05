@@ -2,13 +2,19 @@ Package: clustNet
 Type: Package
 Title: Network-Based Clustering
 Version: 1.0.1
-Author: Fritz Bayer, Jack Kuipers
-Maintainer: Fritz Bayer <frbayer@ethz.ch>
+Authors@R: 
+  c(person(given = "Fritz",
+           family = "Bayer",
+           role = c("aut", "cre", "cph"),
+           email = "frbayer@ethz.ch"),
+    person(given = "Jack",
+           family = "Kuipers",
+           role = "ctb"))
 Description: Network-based clustering using a Bayesian network mixture model with optional covariate adjustment.
-License: GPL-3 | file LICENSE
 Depends:
     R (>= 3.5.0)
 Encoding: UTF-8
+License: GPL-3
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,

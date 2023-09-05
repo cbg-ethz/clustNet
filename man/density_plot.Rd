@@ -11,6 +11,9 @@ density_plot(cluster_results, var_selection = NULL)
 
 \item{var_selection}{Selected variables to consider, e.g. c(1:5) for first five only}
 }
+\value{
+A density plot of class recordedplot.
+}
 \description{
 Create 2d visualisation of sample fit to Bayesian network clusters
 }

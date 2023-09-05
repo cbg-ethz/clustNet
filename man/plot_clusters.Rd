@@ -8,7 +8,7 @@ plot_clusters(
   cluster_results,
   data = NULL,
   node_colours = "#fdae61",
-  binary_cols = TRUE,
+  scale_entropy = FALSE,
   directed = TRUE
 )
 }
@@ -19,10 +19,27 @@ plot_clusters(
 
 \item{node_colours}{node colours}
 
-\item{binary_cols}{Input can be a vector of the binary variables; if "TRUE", the binary variables are automatically determined; if NULL, then entropy will be used only}
+\item{scale_entropy}{if true, entropy measure will be used to determine size of the nodes}
 
 \item{directed}{TRUE if nodes should be directed}
 }
+\value{
+A summary plot of all cluster networks of class c("gg", "ggplot", "ggarrange").
+}
 \description{
 Plot clusters
+}
+\examples{
+\donttest{
+# choose data
+my_data <- BiDAG::Asia[1:2000,]
+# learn clusters
+cluster_results <- get_clusters(my_data)
+# visualize the networks
+library(ggplot2)
+library(ggraph)
+library(igraph)
+library(ggpubr)
+plot_clusters(cluster_results)
+}
 }
