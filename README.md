@@ -38,20 +38,16 @@ sampled_data <- simulation_data$sampled_data
 # Network-based clustering
 cluster_res <- get_clusters(sampled_data, k_clust = k_clust)
 
-# Calculate the ARI 
-library(mclust)
-adjustedRandIndex(simulation_data$cluster_membership, cluster_res_t$clustermembership)
-
 # Visualize the networks
 library(ggplot2)
 library(ggraph)
 library(igraph)
 library(ggpubr)
 
-clustNet::plot_clusters(cluster_res_t)
+plot_clusters(cluster_res)
 
 # Visualize a single network
-my_graph <- igraph::graph_from_adjacency_matrix(cluster_res_t$DAGs[[1]], mode="directed")
-clustNet::nice_DAG_plot(my_graph)
+my_graph <- igraph::graph_from_adjacency_matrix(cluster_res$DAGs[[1]], mode="directed")
+nice_DAG_plot(my_graph)
 
 ```
