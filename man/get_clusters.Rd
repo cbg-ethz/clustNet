@@ -9,7 +9,7 @@ get_clusters(
   k_clust = 3,
   n_bg = 0,
   quick = TRUE,
-  EMseeds = 1:3,
+  EMseeds = 1,
   edgepmat = NULL,
   blacklist = NULL,
   bdepar = list(chi = 0.5, edgepf = 8),
@@ -17,13 +17,13 @@ get_clusters(
 )
 }
 \arguments{
-\item{myData}{Data to be clustered}
+\item{myData}{Data to be clustered, must be either binary (with levels "0"/"1") or categorical (with levels "0"/"1"/"2"/...)}
 
 \item{k_clust}{Number of clusters}
 
-\item{n_bg}{Number of covariates}
+\item{n_bg}{Number of covariates to be adjusted for; the position of the covariates must be in the last column of the myData matrix}
 
-\item{quick}{if TRUE, then the runtime is quick}
+\item{quick}{if TRUE, then the runtime is quick but accuracy is lower}
 
 \item{EMseeds}{Seeds}
 
@@ -44,9 +44,9 @@ Network-based clustering
 \examples{
 \donttest{
 # choose data
-my_data <- BiDAG::Asia[1:2000,]
+sampled_data <- sampleData(n_vars = 15, n_samples = c(300,300,300))$sampled_data
 # learn clusters
-cluster_results <- get_clusters(my_data)
+cluster_results <- get_clusters(sampled_data)
 # visualize the networks
 library(ggplot2)
 library(ggraph)

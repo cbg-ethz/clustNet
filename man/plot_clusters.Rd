@@ -6,7 +6,6 @@
 \usage{
 plot_clusters(
   cluster_results,
-  data = NULL,
   node_colours = "#fdae61",
   scale_entropy = FALSE,
   directed = TRUE
@@ -14,8 +13,6 @@ plot_clusters(
 }
 \arguments{
 \item{cluster_results}{Cluster results}
-
-\item{data}{data}
 
 \item{node_colours}{node colours}
 
@@ -32,9 +29,9 @@ Plot clusters
 \examples{
 \donttest{
 # choose data
-my_data <- BiDAG::Asia[1:2000,]
+sampled_data <- sampleData(n_vars = 15, n_bg = 0)$sampled_data
 # learn clusters
-cluster_results <- get_clusters(my_data)
+cluster_results <- get_clusters(sampled_data)
 # visualize the networks
 library(ggplot2)
 library(ggraph)

@@ -7,7 +7,7 @@
 sampleData(
   k_clust = 3,
   n_vars = 20,
-  n_bg = 3,
+  n_bg = 0,
   n_samples = NULL,
   bgedges = "different",
   equal_cpt_bg = TRUE
@@ -31,4 +31,12 @@ sampled binary data
 }
 \description{
 Sample binary data from different Bayes nets
+}
+\examples{
+\donttest{
+# sample data
+simulation_data <- sampleData(k_clust = 3, n_vars = 15, n_samples = c(200,200,200))
+sampled_data <- simulation_data$sampled_data
+head(sampled_data)
+}
 }

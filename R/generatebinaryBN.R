@@ -346,12 +346,19 @@ generatebinaryBN.data.all <- function(nvar,BNsBG,lsamples, n_bg=NULL, nbggroups=
 #'
 #' @return sampled binary data
 #' @export
-sampleData <- function(k_clust = 3, n_vars = 20, n_bg = 3, n_samples = NULL, bgedges = "different", equal_cpt_bg=TRUE){
+#' @examples
+#' \donttest{
+#' # sample data
+#' simulation_data <- sampleData(k_clust = 3, n_vars = 15, n_samples = c(200,200,200))
+#' sampled_data <- simulation_data$sampled_data
+#' head(sampled_data)
+#' }
+sampleData <- function(k_clust = 3, n_vars = 20, n_bg = 0, n_samples = NULL, bgedges = "different", equal_cpt_bg=TRUE){
   # sample binary data from different Bayes nets
 
   # set sample size
-  n_samples <- c()
   if (length(n_samples)==0){
+    n_samples <- c()
     for (ll in 1:k_clust){
       n_samples <- c(n_samples, 100*ll+600)
     }

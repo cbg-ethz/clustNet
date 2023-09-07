@@ -5,11 +5,25 @@
 #'
 #' @param cluster_results Cluster results from function get_clusters
 #' @param var_selection Selected variables to consider, e.g. c(1:5) for first five only
+#' @param colourys A vector specifying the colors of each cluster (optional)
 #' @return A density plot of class recordedplot.
 #'
 #' @export
-# #' @importFrom igraph graph_from_adjacency_matrix
-density_plot <- function(cluster_results, var_selection = NULL){
+#' @examples
+#' \donttest{
+#' # choose data
+#' sampled_data <- sampleData(n_vars = 15, n_samples = c(200,200,200))$sampled_data
+#' # learn clusters
+#' cluster_results <- get_clusters(sampled_data)
+#' # visualize the networks
+#' library(car)
+#' library(ks)
+#' library(ggplot2)
+#' library(graphics)
+#' library(stats)
+#' density_plot(cluster_results)
+#' }
+density_plot <- function(cluster_results, var_selection = NULL, colourys = NULL){
 
   if (!requireNamespace("car", quietly = TRUE)) {
     stop(
@@ -99,10 +113,15 @@ density_plot <- function(cluster_results, var_selection = NULL){
   # colourys<-c("#202020","#774411","#DDAA77","#ed2124","#114477","#CC99BB",
   #                      "#88CCAA","#117744","#77AADD")
 
-  colourys<-c("#202020","#771122","#AA4455","#DD7788","#774411","#AA7744",
-                       "#DDAA77","#777711","#AAAA44","#DDDD77","#117744","#44AA77",
-                       "#88CCAA","#117777","#44AAAA","#77CCCC","#114477","#4477AA",
-                       "#77AADD","#771155","#AA4488","#CC99BB")
+
+
+
+  if (is.null(colourys)){
+    colourys<-c("#202020","#771122","#AA4455","#DD7788","#774411","#AA7744",
+                         "#DDAA77","#777711","#AAAA44","#DDDD77","#117744","#44AA77",
+                         "#88CCAA","#117777","#44AAAA","#77CCCC","#114477","#4477AA",
+                         "#77AADD","#771155","#AA4488","#CC99BB")
+  }
 
   oldpar <- graphics::par(no.readonly = TRUE)
   on.exit(graphics::par(oldpar))

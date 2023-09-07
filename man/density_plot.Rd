@@ -4,16 +4,33 @@
 \alias{density_plot}
 \title{density_plot}
 \usage{
-density_plot(cluster_results, var_selection = NULL)
+density_plot(cluster_results, var_selection = NULL, colourys = NULL)
 }
 \arguments{
 \item{cluster_results}{Cluster results from function get_clusters}
 
 \item{var_selection}{Selected variables to consider, e.g. c(1:5) for first five only}
+
+\item{colourys}{A vector specifying the colors of each cluster (optional)}
 }
 \value{
 A density plot of class recordedplot.
 }
 \description{
 Create 2d visualisation of sample fit to Bayesian network clusters
+}
+\examples{
+\donttest{
+# choose data
+sampled_data <- sampleData(n_vars = 15, n_samples = c(200,200,200))$sampled_data
+# learn clusters
+cluster_results <- get_clusters(sampled_data)
+# visualize the networks
+library(car)
+library(ks)
+library(ggplot2)
+library(graphics)
+library(stats)
+density_plot(cluster_results)
+}
 }

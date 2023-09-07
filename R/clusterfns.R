@@ -153,16 +153,15 @@ getBestSeed <- function(assignprogress){
 #'
 #' @description Network-based clustering
 #'
-#' @param myData Data to be clustered
+#' @param myData Data to be clustered, must be either binary (with levels "0"/"1") or categorical (with levels "0"/"1"/"2"/...)
 #' @param k_clust Number of clusters
-#' @param n_bg Number of covariates
-# #' @param itLim Maximum number of iterations
+#' @param n_bg Number of covariates to be adjusted for; the position of the covariates must be in the last column of the myData matrix
 #' @param EMseeds Seeds
 #' @param edgepmat Matrix of penalized edges in the search space
 #' @param blacklist Matrix of forbidden edges in the search space
 #' @param bdepar Hyperparameters for structure learning (BDE score)
 #' @param newallrelativeprobabs relative probability of cluster assignment of each sample
-#' @param quick if TRUE, then the runtime is quick
+#' @param quick if TRUE, then the runtime is quick but accuracy is lower
 # #' @param err error threshold defining when to stop
 #'
 #' @return a list containing the clusterMemberships and "assignprogress"
@@ -170,9 +169,9 @@ getBestSeed <- function(assignprogress){
 #' @examples
 #' \donttest{
 #' # choose data
-#' my_data <- BiDAG::Asia[1:2000,]
+#' sampled_data <- sampleData(n_vars = 15, n_samples = c(300,300,300))$sampled_data
 #' # learn clusters
-#' cluster_results <- get_clusters(my_data)
+#' cluster_results <- get_clusters(sampled_data)
 #' # visualize the networks
 #' library(ggplot2)
 #' library(ggraph)
@@ -180,12 +179,10 @@ getBestSeed <- function(assignprogress){
 #' library(ggpubr)
 #' plot_clusters(cluster_results)
 #' }
-get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edgepmat=NULL, blacklist=NULL, bdepar=list(chi = 0.5, edgepf = 8), newallrelativeprobabs=NULL){
+get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1, edgepmat=NULL, blacklist=NULL, bdepar=list(chi = 0.5, edgepf = 8), newallrelativeprobabs=NULL){
 
   # measure time
   start_time <- Sys.time()
-
-  startseed <- EMseeds[1]
 
   if (missing(myData)) stop("Need a categorical matrix as input to cluster.")
   if (!all(myData%%1==0)) stop("All categorical variables need to be specified as integers. Binary variables can be 0 or 1.")
@@ -207,7 +204,10 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1:3, edg
     err<-1e-10
     nIterations <- 30
     itLim <- 100
+    EMseeds <- EMseeds[1]+0:5
   }
+
+  startseed <- EMseeds[1]
 
   # Prior Bernoulli clustering
   if(is.null(newallrelativeprobabs)){
