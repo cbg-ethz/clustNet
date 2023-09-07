@@ -19,7 +19,7 @@ Being hosted on GitHub, it is also possible to use the `install_github` tool fro
 
 ```{r eval=FALSE}
 library("devtools")
-install_github("fritzbayer/clustNet")
+install_github("cbg-ethz/clustNet")
 ```
 
 `clustNet` requires R `>= 3.5`.
