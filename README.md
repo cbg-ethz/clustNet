@@ -8,12 +8,14 @@ clustNet: Network-based clustering with covariate adjustment
 Installation
 -----------
 
-In order to install the package, it suffices to launch
-`R CMD INSTALL path/to/clustNet`
-from a terminal, or `make install` from within the package source folder.
+The latest stable version of clustNet is available on CRAN and can be installed with
 
-Being hosted on GitHub, it is possible to use the `install_github`
-tool from an R session:
+```{r eval=FALSE}
+install.packages("clustNet")
+```
+from within an R session.
+
+Being hosted on GitHub, it is also possible to use the `install_github` tool from an R session to install the latest development version:
 
 ```{r eval=FALSE}
 library("devtools")
