@@ -47,13 +47,13 @@ get_classification <- function(cluster_results, data_classify){
   # Find missing variables in matrix_one
   missing_vars_one <- setdiff(colnames(matrix_one), colnames(matrix_two))
   if(length(missing_vars_one)> 0){
-    cat("Missing variables in cluster data:", missing_vars_one, "\n")
+    cat("Missing variables in classification data:", missing_vars_one, "\n")
   }
 
   # Find missing variables in matrix_two
   missing_vars_two <- setdiff(colnames(matrix_two), colnames(matrix_one))
   if(length(missing_vars_two)> 0){
-    cat("Missing variables in classification data:", missing_vars_two, "\n")
+    cat("Missing variables in cluster data:", missing_vars_two, "\n")
   }
 
   # Get column indices of shared variables in matrix_one
