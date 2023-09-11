@@ -2,6 +2,7 @@
 
 export(bestAICsearch)
 export(density_plot)
+export(get_classification)
 export(get_clusters)
 export(get_clusters_bernoulli)
 export(nice_DAG_plot)
