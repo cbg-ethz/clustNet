@@ -31,6 +31,12 @@ get_classification <- function(cluster_results, data_classify){
   clustercenters <- cluster_results$DAGs
   newallrelativeprobabs <- cluster_results$probs
 
+  # get potential covariates for adjustment
+  if(is.null(!cluster_results$n_bg)){
+    n_bg <- cluster_results$n_bg
+  } else{
+    n_bg <- 0
+  }
 
   ## detect and adjust for missing data
 
