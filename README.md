@@ -3,7 +3,7 @@ clustNet: Network-based clustering with covariate adjustment
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-`clustNet` is an R package for network-based clustering of binary data using a Bayesian network mixture model and optional covariate adjustment.
+`clustNet` is an R package for network-based clustering of categorical data using a Bayesian network mixture model and optional covariate adjustment.
 
 Installation
 -----------
