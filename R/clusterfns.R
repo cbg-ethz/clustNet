@@ -204,7 +204,7 @@ get_clusters <- function(myData, k_clust=3, n_bg=0, quick=TRUE, EMseeds=1, edgep
     err<-1e-10
     nIterations <- 30
     itLim <- 100
-    EMseeds <- EMseeds[1]+0:5
+    EMseeds <- EMseeds[1]+0:2
   }
 
   startseed <- EMseeds[1]
