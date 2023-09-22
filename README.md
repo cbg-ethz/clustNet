@@ -31,25 +31,31 @@ Example
 ```{r eval=FALSE}
 library(clustNet)
 
-# Simulate binary data from 3 clusters
-k_clust <- 3
-ss <- c(400, 500, 600) # samples in each clusterclustNet
+# Simulate data
+k_clust <- 3 # numer of clusters
+ss <- c(400, 500, 600) # samples in each cluster
 simulation_data <- sampleData(k_clust = k_clust, n_vars = 20, n_samples = ss)
 sampled_data <- simulation_data$sampled_data
 
 # Network-based clustering
-cluster_res <- get_clusters(sampled_data, k_clust = k_clust)
+cluster_results <- get_clusters(sampled_data, k_clust = k_clust)
 
-# Visualize the networks
+# Load additional pacakges to visualize the networks
 library(ggplot2)
 library(ggraph)
 library(igraph)
 library(ggpubr)
 
-plot_clusters(cluster_res)
+# Visualize networks
+plot_clusters(cluster_results)
 
-# Visualize a single network
-my_graph <- igraph::graph_from_adjacency_matrix(cluster_res$DAGs[[1]], mode="directed")
-nice_DAG_plot(my_graph)
+# Load additional pacakges to create a 2d dimensionality reduction
+library(car)
+library(ks)
+library(graphics)
+library(stats)
+
+# Plot a 2d dimensionality reduction
+density_plot(cluster_results)
 
 ```
