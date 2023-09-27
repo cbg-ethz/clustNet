@@ -28,15 +28,16 @@ Plot clusters
 }
 \examples{
 \donttest{
-# choose data
+# Simulate data
 sampled_data <- sampleData(n_vars = 15, n_bg = 0)$sampled_data
 # learn clusters
 cluster_results <- get_clusters(sampled_data)
-# visualize the networks
+# Load additional pacakges to visualize the networks
 library(ggplot2)
 library(ggraph)
 library(igraph)
 library(ggpubr)
+# Visualize networks
 plot_clusters(cluster_results)
 }
 }
