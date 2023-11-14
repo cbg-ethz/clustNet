@@ -64,3 +64,5 @@ library(stats)
 density_plot(cluster_results)
 
 ```
+
+On a normal computer, the clustering should take around 2-4 minutes.
